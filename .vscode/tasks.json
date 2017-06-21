@@ -7,7 +7,7 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/atmosphere-web-2.csproj"
+                "${workspaceRoot}/atmosphere-web.csproj"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"

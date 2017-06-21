@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 
-namespace atmosphere_web_2
+namespace AtmosphereWeb
 {
     public class Program
     {

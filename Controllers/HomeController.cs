@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace atmosphere_web_2.Controllers
+namespace AtmosphereWeb.Controllers
 {
     public class HomeController : Controller
     {
