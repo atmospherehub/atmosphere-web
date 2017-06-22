@@ -5,7 +5,7 @@ import { Chart } from 'chart.js';
 
 @inject(Element, HttpClient)
 export class MoodSeriesCustomElement {
-    public seriesData: SeriesGroup[];
+    public seriesData: DayAverages[];
     public moods: Mood[];
     private _element: Element;
 
@@ -34,18 +34,18 @@ export class MoodSeriesCustomElement {
             Color: 'rgb(54, 162, 235)'
         }];
 
-        http.fetch('')
-            .then(result => result.json() as Promise<SeriesGroup[]>)
+        http.fetch('/api/charts/DayAveragesSeries?from=3/1/2017&to=3/30/2017')
+            .then(result => result.json() as Promise<DayAverages[]>)
             .then(data => {
                 this.seriesData = data;
                 var chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'line',
                     data: {
-                        labels: _.map(data, g => g.GroupValue),
+                        labels: _.map(data, g => g.dayNumber),
                         datasets: _.map(this.moods, mood => {
                             return {
                                 label: mood.Name,
-                                data: _.map(data, raw => raw['Avg' + mood.Name]),
+                                data: _.map(data, raw => raw['avg' + mood.Name]),
                                 backgroundColor: Chart.helpers.color(mood.Color).alpha(0.1).rgbString(),
                                 borderColor: mood.Color
                             }
@@ -86,18 +86,16 @@ export class MoodSeriesCustomElement {
     }
 }
 
-interface SeriesGroup {
-    GroupValue: number;
-    FormattedDate: Date;
-    GroupCount: number;
-    AvgAnger: number;
-    AvgContempt: number;
-    AvgDisgust: number;
-    AvgFear: number;
-    AvgHappiness: number;
-    AvgNeutral: number;
-    AvgSadness: number;
-    AvgSurprise: number;
+interface DayAverages {
+    dayNumber: number;
+    avgAnger: number;
+    avgContempt: number;
+    avgDisgust: number;
+    avgFear: number;
+    avgHappiness: number;
+    avgNeutral: number;
+    avgSadness: number;
+    avgSurprise: number;
 }
 
 interface Mood {
