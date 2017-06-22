@@ -1,46 +1,37 @@
 import { HttpClient } from 'aurelia-fetch-client';
 import { inject } from 'aurelia-framework';
-import _ from 'underscore';
+import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 
 @inject(Element, HttpClient)
-export class MoodSeries {
+export class MoodSeriesCustomElement {
     public seriesData: SeriesGroup[];
+    public moods: Mood[];
     private _element: Element;
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
-        var colors = {
-            red: 'rgb(255, 99, 132)',
-            orange: 'rgb(255, 159, 64)',
-            yellow: 'rgb(255, 205, 86)',
-            green: 'rgb(75, 192, 192)',
-            blue: 'rgb(54, 162, 235)',
-            purple: 'rgb(153, 102, 255)',
-            grey: 'rgb(201, 203, 207)'
-        };
-        
-        var moods = [{
-            name: 'Anger',
-            color: colors.red
+        this.moods = [{
+            Name: 'Anger',
+            Color: 'rgb(255, 99, 132)'
         }, {
-            name: 'Contempt',
-            color: colors.orange
+            Name: 'Contempt',
+            Color: 'rgb(255, 159, 64)'
         }, {
-            name: 'Disgust',
-            color: colors.yellow
+            Name: 'Disgust',
+            Color: 'rgb(255, 205, 86)'
         }, {
-            name: 'Fear',
-            color: colors.purple
+            Name: 'Fear',
+            Color: 'rgb(153, 102, 255)'
         }, {
-            name: 'Happiness',
-            color: colors.green
+            Name: 'Happiness',
+            Color: 'rgb(75, 192, 192)'
         }, {
-            name: 'Sadness',
-            color: colors.grey
+            Name: 'Sadness',
+            Color: 'rgb(201, 203, 207)'
         }, {
-            name: 'Surprise',
-            color: colors.blue
+            Name: 'Surprise',
+            Color: 'rgb(54, 162, 235)'
         }];
 
         http.fetch('')
@@ -51,20 +42,23 @@ export class MoodSeries {
                     type: 'line',
                     data: {
                         labels: _.map(data, g => g.GroupValue),
-                        datasets: _.map(moods, mood => {
+                        datasets: _.map(this.moods, mood => {
                             return {
-                                label: mood.name,
-                                data: _.map(data, raw => raw['Avg' + mood.name]),
-                                backgroundColor: Chart.helpers.color(mood.color).alpha(0.1).rgbString(),
-                                borderColor: mood.color
+                                label: mood.Name,
+                                data: _.map(data, raw => raw['Avg' + mood.Name]),
+                                backgroundColor: Chart.helpers.color(mood.Color).alpha(0.1).rgbString(),
+                                borderColor: mood.Color
                             }
                         })
                     },
                     options: {
-                        maintainAspectRatio: true,
+                        legend:{
+                            display: false
+                        },
+                        maintainAspectRatio: false,
                         elements: {
                             line: {
-                                tension: 0.2,
+                                tension: 0.01,
                                 borderWidth: 2,
                             },
                             point: {
@@ -82,7 +76,7 @@ export class MoodSeries {
                             }],
                             xAxes: [{
                                 gridLines: {
-                                    color: "rgba(0, 0, 0, 0)",
+                                    display : false,
                                 }
                             }]
                         }
@@ -104,4 +98,9 @@ interface SeriesGroup {
     AvgNeutral: number;
     AvgSadness: number;
     AvgSurprise: number;
+}
+
+interface Mood {
+    Name: string;
+    Color: string;
 }

@@ -1,0 +1,20 @@
+<template>
+    <div class="card">
+        <div class="header">
+            <h4 class="title">Average Mood</h4>
+            <p class="category">Calculated for each day during last month</p>
+        </div>
+        <div class="content">
+            <div class="chart-container" style="position: relative; height:45vh">
+                <canvas></canvas>
+            </div>
+            <div class="footer">
+                <div class="legend">
+                    <span repeat.for="mood of moods">
+                        <i class="fa fa-circle" css="color: ${ mood.Color }"></i> ${ mood.Name }
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -10,14 +10,14 @@ export class Main {
             route: [ '', 'home' ],
             name: 'home',
             settings: { icon: 'home' },
-            moduleId: PLATFORM.moduleName('../components/home/home'),
+            moduleId: PLATFORM.moduleName('../views/home'),
             nav: true,
             title: 'Home'
         }, {
             route: 'fetch-data',
             name: 'fetchdata',
             settings: { icon: 'th-list' },
-            moduleId: PLATFORM.moduleName('../components/fetchdata/fetchdata'),
+            moduleId: PLATFORM.moduleName('../views/fetchdata'),
             nav: true,
             title: 'Fetch data'
         }]);
