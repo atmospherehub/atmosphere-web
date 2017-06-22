@@ -2,15 +2,19 @@ import { HttpClient } from 'aurelia-fetch-client';
 import { inject } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
+import * as moment from 'moment';
 
 @inject(Element, HttpClient)
 export class MoodSeriesCustomElement {
     public seriesData: DayAverages[];
     public moods: Mood[];
     private _element: Element;
+    public startPeriodFormat: string;
+    public endPeriodFormat: string;
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
+        
         this.moods = [{
             Name: 'Anger',
             Color: 'rgb(255, 99, 132)'
@@ -34,7 +38,12 @@ export class MoodSeriesCustomElement {
             Color: 'rgb(54, 162, 235)'
         }];
 
-        http.fetch('/api/charts/DayAveragesSeries?from=3/1/2017&to=3/30/2017')
+        var endPeriod = moment().endOf('day');
+        var startPeriod = moment(endPeriod).add(-30, 'days');
+        this.endPeriodFormat = endPeriod.format("MMMM Do"); ;
+        this.startPeriodFormat = startPeriod.format("MMMM Do");
+
+        http.fetch(`/api/charts/DayAveragesSeries?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
             .then(result => result.json() as Promise<DayAverages[]>)
             .then(data => {
                 this.seriesData = data;
@@ -55,7 +64,7 @@ export class MoodSeriesCustomElement {
                         legend:{
                             display: false
                         },
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: false, 
                         elements: {
                             line: {
                                 tension: 0.01,

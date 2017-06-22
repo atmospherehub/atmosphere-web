@@ -1,7 +1,6 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -18,10 +17,12 @@ namespace AtmosphereWeb.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IEnumerable<DayAverages>> DayAveragesSeries(DateTimeOffset from, DateTimeOffset to)
+        public async Task<IActionResult> DayAveragesSeries([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
         {
+            if (!from.HasValue || !to.HasValue) return BadRequest();
+
             await _connection.OpenAsync();
-            return await _connection.QueryAsync<DayAverages>(@"
+            return Ok(await _connection.QueryAsync<DayAverages>(@"
                 SELECT 
                     DATEPART(DAY, [Time] AT TIME ZONE 'Israel Standard Time') AS [DayNumber]
                     ,MIN([Time]) AS [StartTime]
@@ -39,9 +40,9 @@ namespace AtmosphereWeb.Controllers
                 ORDER BY [StartTime]",
                 new
                 {
-                    start = from.UtcDateTime,
-                    end = to.UtcDateTime
-                });
+                    start = from.Value.UtcDateTime,
+                    end = to.Value.UtcDateTime
+                }));
         }
 
         public class DayAverages

@@ -35,7 +35,8 @@ module.exports = ({ prod } = {}) => {
                 'bootstrap/dist/css/bootstrap.css',
                 'jquery',
                 'chart.js',
-                'underscore'
+                'underscore',
+                'moment'
             ],
         },
         output: {
