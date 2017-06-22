@@ -22,6 +22,7 @@ export class Main {
             title: 'Fetch data'
         }]);
 
+
         this.router = router;
     }
 }
