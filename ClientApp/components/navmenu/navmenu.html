@@ -1,0 +1,12 @@
+<template bindable="router">
+    <require from="./navmenu.css"></require>
+
+    <ul class="nav">
+        <li repeat.for="row of router.navigation" class="${ row.isActive ? 'link-active' : '' }">
+            <a href.bind="row.href">
+                <i class="fa fa-${ row.settings.icon }"></i>
+                <p>${ row.title }</p>
+            </a>
+        </li>
+    </ul>
+</template>
