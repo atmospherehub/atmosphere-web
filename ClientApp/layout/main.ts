@@ -13,13 +13,6 @@ export class Main {
             moduleId: PLATFORM.moduleName('../views/dashboard'),
             nav: true,
             title: 'Home'
-        }, {
-            route: 'fetch-data',
-            name: 'fetchdata',
-            settings: { icon: 'th-list' },
-            moduleId: PLATFORM.moduleName('../views/fetchdata'),
-            nav: true,
-            title: 'Fetch data'
         }]);
 
 
