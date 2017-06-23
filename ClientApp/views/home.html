@@ -1,9 +1,21 @@
 <template>
-    <require from="../components/charts/mood-series"></require>
+    <require from="../components/charts/mood-averages"></require>
+    <require from="../components/charts/mood-dominants"></require>
 
     <div class="row">
-        <div class="col-md-12">
-            <mood-series></mood-series>
+        <div class="col-md-9">
+            <mood-averages></mood-averages>
+        </div>
+        <div class="col-md-3">
+            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <mood-dominants></mood-dominants>
+        </div>
+        <div class="col-md-6">
+            
         </div>
     </div>
     <div class="row">
