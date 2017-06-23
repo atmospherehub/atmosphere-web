@@ -195,5 +195,35 @@ namespace AtmosphereWeb.Controllers
                     end = to.Value.UtcDateTime
                 }));
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> WeekDayNonNeutralPercent([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
+        {
+            if (!from.HasValue || !to.HasValue) return BadRequest();
+
+            await _connection.OpenAsync();
+            return Ok(await _connection.QueryAsync(@"
+				SELECT 
+                    DATEPART(WEEKDAY, [Time] AT TIME ZONE 'Israel Standard Time') AS [WeekDay]
+					,COUNT(*) [Total]
+                    ,(SUM(CognitiveAnger) 
+					+ SUM(CognitiveContempt)
+					+ SUM(CognitiveDisgust)
+					+ SUM(CognitiveFear)
+                    + SUM(CognitiveHappiness)
+					+ SUM(CognitiveSadness)
+					+ SUM(CognitiveSurprise)) / SUM(CognitiveNeutral) AS [PercentNonNeutral]
+                FROM [dbo].[Faces]
+                WHERE [Time] >= @start AND [Time] <= @end
+                GROUP BY DATEPART(WEEKDAY, [Time] AT TIME ZONE 'Israel Standard Time') 
+				HAVING COUNT(*) > @minFacesInDay
+                ORDER BY [WeekDay]",
+                new
+                {
+                    start = from.Value.UtcDateTime,
+                    end = to.Value.UtcDateTime,
+                    minFacesInDay = 10
+                }));
+        }
     }
 }

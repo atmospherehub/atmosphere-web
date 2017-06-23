@@ -9,8 +9,6 @@ import { COMMON_MOODS, Mood } from '../../utils';
 export class MoodDominantsCustomElement {
     public moods: Mood[];
     private _element: Element;
-    public startPeriodFormat: string;
-    public endPeriodFormat: string;
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
@@ -18,8 +16,6 @@ export class MoodDominantsCustomElement {
 
         var endPeriod = moment().endOf('day');
         var startPeriod = moment(endPeriod).add(-30, 'days');
-        this.endPeriodFormat = endPeriod.format("MMMM Do");;
-        this.startPeriodFormat = startPeriod.format("MMMM Do");
 
         http.fetch(`/api/charts/DayDominantMoodsCounts?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
             .then(result => result.json() as Promise<DayDominants[]>)
