@@ -5,12 +5,12 @@ export class Main {
     router: Router;
 
     configureRouter(config: RouterConfiguration, router: Router) {
-        config.title = 'Aurelia';
+        config.title = 'Atmosphere';
         config.map([{
-            route: [ '', 'home' ],
-            name: 'home',
+            route: [ '', 'dashboard' ],
+            name: 'dashboard',
             settings: { icon: 'home' },
-            moduleId: PLATFORM.moduleName('../views/home'),
+            moduleId: PLATFORM.moduleName('../views/dashboard'),
             nav: true,
             title: 'Home'
         }, {
