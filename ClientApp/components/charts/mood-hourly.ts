@@ -9,8 +9,6 @@ import { COMMON_MOODS, Mood } from '../../utils';
 export class MoodHourlyCustomElement {
     public moods: Mood[];
     private _element: Element;
-    public startPeriodFormat: string;
-    public endPeriodFormat: string;
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
@@ -18,12 +16,10 @@ export class MoodHourlyCustomElement {
 
         var endPeriod = moment().endOf('day');
         var startPeriod = moment(endPeriod).add(-30, 'days');
-        this.endPeriodFormat = endPeriod.format("MMMM Do");;
-        this.startPeriodFormat = startPeriod.format("MMMM Do");
 
         http.fetch(`/api/charts/HourlyMoodsCounts?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
             .then(result => result.json() as Promise<HourlyMoods[]>)
-            .then(data => _.sortBy(data, h => h.Hour >=8 && h.Hour < 12 ? h.Hour + 12 : h.Hour))
+            .then(data => _.sortBy(data, h => h.Hour >= 8 && h.Hour < 12 ? h.Hour + 12 : h.Hour))
             .then(data => {
                 var chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'radar',
@@ -41,6 +37,9 @@ export class MoodHourlyCustomElement {
                     options: {
                         legend: {
                             display: false
+                        },
+                        tooltips: {
+                            mode: 'index'
                         },
                         maintainAspectRatio: false
                     }

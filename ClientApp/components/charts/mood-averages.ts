@@ -13,12 +13,12 @@ export class MoodAveragesCustomElement {
     public endPeriodFormat: string;
 
     constructor(element: Element, http: HttpClient) {
-        this._element = element;        
+        this._element = element;
         this.moods = COMMON_MOODS;
 
         var endPeriod = moment().endOf('day');
         var startPeriod = moment(endPeriod).add(-30, 'days');
-        this.endPeriodFormat = endPeriod.format("MMMM Do"); ;
+        this.endPeriodFormat = endPeriod.format("MMMM Do");;
         this.startPeriodFormat = startPeriod.format("MMMM Do");
 
         http.fetch(`/api/charts/DayMoodsAverages?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
@@ -38,10 +38,10 @@ export class MoodAveragesCustomElement {
                         })
                     },
                     options: {
-                        legend:{
+                        legend: {
                             display: false
                         },
-                        maintainAspectRatio: false, 
+                        maintainAspectRatio: false,
                         elements: {
                             line: {
                                 tension: 0.01,
@@ -50,6 +50,9 @@ export class MoodAveragesCustomElement {
                             point: {
                                 radius: 3
                             }
+                        },
+                        tooltips: {
+                            enabled: false
                         },
                         scales: {
                             yAxes: [{
@@ -62,7 +65,7 @@ export class MoodAveragesCustomElement {
                             }],
                             xAxes: [{
                                 gridLines: {
-                                    display : false,
+                                    display: false,
                                 }
                             }]
                         }

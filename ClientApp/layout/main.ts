@@ -12,7 +12,7 @@ export class Main {
             settings: { icon: 'home' },
             moduleId: PLATFORM.moduleName('../views/dashboard'),
             nav: true,
-            title: 'Home'
+            title: 'Dashboard'
         }]);
 
 

@@ -235,5 +235,31 @@ namespace AtmosphereWeb.Controllers
                     end = to.Value.UtcDateTime
                 }));
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> PeopleOnImageCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
+        {
+            if (!from.HasValue || !to.HasValue) return BadRequest();
+
+            await _connection.OpenAsync();
+            return Ok(await _connection.QueryAsync(@"
+                SELECT 
+	                [PeopleOnImage], 
+	                COUNT(*) AS [Count] 
+                FROM (
+	                SELECT 
+		                COUNT(*) as [PeopleOnImage]
+	                FROM [dbo].[Faces]
+	                WHERE [Time] >= @start AND [Time] <= @end
+	                GROUP BY [Image]) A 
+                GROUP BY [PeopleOnImage]
+                ORDER BY [PeopleOnImage]               
+                ",
+                new
+                {
+                    start = from.Value.UtcDateTime,
+                    end = to.Value.UtcDateTime
+                }));
+        }
     }
 }
