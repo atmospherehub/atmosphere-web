@@ -36,7 +36,8 @@ module.exports = ({ prod } = {}) => {
                 'jquery',
                 'chart.js',
                 'underscore',
-                'moment'
+                'moment',
+                'bootstrap-daterangepicker'
             ],
         },
         output: {
