@@ -23,13 +23,13 @@ export class MoodDominantsCustomElement {
     public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {
         if(this._chart != null) this._chart.destroy();
 
-        this._http.fetch(`/api/charts/DayDominantMoodsCounts?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
+        this._http.fetch(`/api/charts/DominantMoodsCounts?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
             .then(result => result.json() as Promise<DayDominants[]>)
             .then(data => {
                 this._chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'bar',
                     data: {
-                        labels: _.map(data, g => g.DayNumber),
+                        labels: _.map(data, g => g.Group),
                         datasets: _.map(this.moods, mood => {
                             return {
                                 label: mood.name,
@@ -72,7 +72,7 @@ export class MoodDominantsCustomElement {
 }
 
 interface DayDominants {
-    DayNumber: number;
+    Group: number;
     Anger: number;
     Contempt: number;
     Disgust: number;

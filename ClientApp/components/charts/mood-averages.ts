@@ -24,13 +24,13 @@ export class MoodAveragesCustomElement {
     public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {        
         if(this._chart != null) this._chart.destroy();
 
-        this._http.fetch(`/api/charts/DayMoodsAverages?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
+        this._http.fetch(`/api/charts/MoodsAverages?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
             .then(result => result.json() as Promise<DayAverages[]>)
             .then(data => {
                 this._chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'line',
                     data: {
-                        labels: _.map(data, g => g.DayNumber),
+                        labels: _.map(data, g => g.Group),
                         datasets: _.map(this.moods, mood => {
                             return {
                                 label: mood.name,
@@ -79,7 +79,7 @@ export class MoodAveragesCustomElement {
 }
 
 interface DayAverages {
-    DayNumber: number;
+    Group: number;
     AvgAnger: number;
     AvgContempt: number;
     AvgDisgust: number;

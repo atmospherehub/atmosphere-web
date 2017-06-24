@@ -17,14 +17,17 @@ namespace AtmosphereWeb.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> DayMoodsAverages([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
+        public async Task<IActionResult> MoodsAverages([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, int minFacesInDay = 10)
         {
             if (!from.HasValue || !to.HasValue) return BadRequest();
+            if (from.Value > to.Value) return BadRequest();
+
+            var datePart = datePartFromRange(from.Value, to.Value);
 
             await _connection.OpenAsync();
-            return Ok(await _connection.QueryAsync(@"
+            return Ok(await _connection.QueryAsync($@"
                 SELECT 
-                    DATEPART(DAY, [Time] AT TIME ZONE 'Israel Standard Time') AS [DayNumber]
+                    DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') AS [Group]
                     ,MIN([Time]) AS [StartTime]
                     ,AVG([CognitiveAnger]) AS AvgAnger                    
                     ,AVG([CognitiveContempt]) AS AvgContempt                    
@@ -36,26 +39,29 @@ namespace AtmosphereWeb.Controllers
                     ,AVG([CognitiveSurprise]) AS AvgSurprise
                 FROM [dbo].[Faces]
                 WHERE [Time] >= @start AND [Time] <= @end
-                GROUP BY DATEPART(DAY, [Time] AT TIME ZONE 'Israel Standard Time') 
+                GROUP BY DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') 
                 HAVING COUNT(*) > @minFacesInDay
                 ORDER BY [StartTime]",
                 new
                 {
                     start = from.Value.UtcDateTime,
                     end = to.Value.UtcDateTime,
-                    minFacesInDay = 10
+                    minFacesInDay = minFacesInDay
                 }));
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> DayDominantMoodsCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
+        public async Task<IActionResult> DominantMoodsCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, int minFacesInDay = 10)
         {
             if (!from.HasValue || !to.HasValue) return BadRequest();
+            if (from.Value > to.Value) return BadRequest();
+
+            var datePart = datePartFromRange(from.Value, to.Value);
 
             await _connection.OpenAsync();
-            return Ok(await _connection.QueryAsync(@"
+            return Ok(await _connection.QueryAsync($@"
                 SELECT 
-                    DATEPART(DAY, [Time] AT TIME ZONE 'Israel Standard Time') AS [DayNumber]
+                    DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') AS [Group]
                     ,MIN([Time]) AS [StartTime]
 					,COUNT(*) [Total]
                     ,SUM(CASE WHEN 
@@ -124,19 +130,19 @@ namespace AtmosphereWeb.Controllers
                             CognitiveSurprise > CognitiveSadness THEN 1 ELSE 0 END) AS Surprise
                 FROM [dbo].[Faces]
                 WHERE [Time] >= @start AND [Time] <= @end
-                GROUP BY DATEPART(DAY, [Time] AT TIME ZONE 'Israel Standard Time') 
+                GROUP BY DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') 
                 HAVING COUNT(*) > @minFacesInDay
                 ORDER BY [StartTime]",
                 new
                 {
                     start = from.Value.UtcDateTime,
                     end = to.Value.UtcDateTime,
-                    minFacesInDay = 10
+                    minFacesInDay = minFacesInDay
                 }));
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> HourlyMoodsCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
+        public async Task<IActionResult> HourlyMoodsCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, double score = 0.1, int workDayStartHour = 7, int workDayEndHour = 20)
         {
             if (!from.HasValue || !to.HasValue) return BadRequest();
 
@@ -164,9 +170,9 @@ namespace AtmosphereWeb.Controllers
                 {
                     start = from.Value.UtcDateTime,
                     end = to.Value.UtcDateTime,
-                    score = 0.1,
-                    workDayStartHour = 7,
-                    workDayEndHour = 20
+                    score = score,
+                    workDayStartHour = workDayStartHour,
+                    workDayEndHour = workDayEndHour
                 }));
         }
 
@@ -197,7 +203,7 @@ namespace AtmosphereWeb.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> WeekDayNonNeutralPercent([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
+        public async Task<IActionResult> WeekDayNonNeutralPercent([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, int minFacesInDay = 10)
         {
             if (!from.HasValue || !to.HasValue) return BadRequest();
 
@@ -222,8 +228,21 @@ namespace AtmosphereWeb.Controllers
                 {
                     start = from.Value.UtcDateTime,
                     end = to.Value.UtcDateTime,
-                    minFacesInDay = 10
+                    minFacesInDay = minFacesInDay
                 }));
+        }
+
+        private string datePartFromRange(DateTimeOffset from, DateTimeOffset to)
+        {
+            var range = to - from;
+            if (range < TimeSpan.FromMinutes(120))
+                return "MINUTE";
+            else if (range < TimeSpan.FromHours(48))
+                return "HOUR";
+            else if (range < TimeSpan.FromDays(90))
+                return "DAY";
+            else
+                return "MONTH";
         }
     }
 }

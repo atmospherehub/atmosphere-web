@@ -30,7 +30,7 @@ export class MoodHourlyCustomElement {
                 this._chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'radar',
                     data: {
-                        labels: _.map(data, g => g.Hour + ':00'),
+                        labels: _.map(_.union(_.map(data, g => g.Hour), [12, 13, 14, 15, 16, 17, 18, 19, 8, 9, 10, 11]), g => g + ':00'),
                         datasets: _.map(this.moods, mood => {
                             return {
                                 label: mood.name,
