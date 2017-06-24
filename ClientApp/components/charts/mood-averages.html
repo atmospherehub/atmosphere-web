@@ -2,7 +2,6 @@
     <div class="card">
         <div class="header">
             <h4 class="title">Moods Averages</h4>
-            <p class="category">Calculated daily average from ${startPeriodFormat} to ${endPeriodFormat} of each mood</p>
         </div>
         <div class="content">
             <div class="chart-container" style="position: relative; height:240px">
@@ -11,9 +10,11 @@
             <div class="footer">
                 <div class="legend">
                     <span repeat.for="mood of moods">
-                        <i class="fa fa-circle" css="color: ${ mood.Color }"></i> ${ mood.Name }
+                        <i class="fa fa-circle" css="color: ${ mood.color }"></i> ${ mood.name }
                     </span>
                 </div>  
+                <hr>
+                <div class="stats"><span><i class="fa fa-info-circle"></i> An average score of each mood</span></div>
             </div>
         </div>
     </div>

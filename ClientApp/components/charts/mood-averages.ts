@@ -1,5 +1,6 @@
+import { DatesRange } from './../date-range/date-range';
 import { HttpClient } from 'aurelia-fetch-client';
-import { inject } from 'aurelia-framework';
+import { bindable, inject } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
@@ -8,32 +9,32 @@ import { COMMON_MOODS, Mood } from '../../utils';
 @inject(Element, HttpClient)
 export class MoodAveragesCustomElement {
     public moods: Mood[];
+    @bindable public range: DatesRange;
+
     private _element: Element;
-    public startPeriodFormat: string;
-    public endPeriodFormat: string;
+    private _http: HttpClient;
+    private _chart: any;
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
+        this._http = http;
         this.moods = COMMON_MOODS;
+    }
 
-        var endPeriod = moment().endOf('day');
-        var startPeriod = moment(endPeriod).add(-30, 'days');
-        this.endPeriodFormat = endPeriod.format("MMMM Do");;
-        this.startPeriodFormat = startPeriod.format("MMMM Do");
-
-        http.fetch(`/api/charts/DayMoodsAverages?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
+    public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {        
+        this._http.fetch(`/api/charts/DayMoodsAverages?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
             .then(result => result.json() as Promise<DayAverages[]>)
             .then(data => {
-                var chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
+                this._chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'line',
                     data: {
                         labels: _.map(data, g => g.DayNumber),
                         datasets: _.map(this.moods, mood => {
                             return {
-                                label: mood.Name,
-                                data: _.map(data, raw => raw['Avg' + mood.Name]),
-                                backgroundColor: Chart.helpers.color(mood.Color).alpha(0.1).rgbString(),
-                                borderColor: mood.Color
+                                label: mood.name,
+                                data: _.map(data, raw => raw['Avg' + mood.name]),
+                                backgroundColor: Chart.helpers.color(mood.color).alpha(0.1).rgbString(),
+                                borderColor: mood.color
                             }
                         })
                     },

@@ -27,10 +27,10 @@ export class MoodHourlyCustomElement {
                         labels: _.map(data, g => g.Hour + ':00'),
                         datasets: _.map(this.moods, mood => {
                             return {
-                                label: mood.Name,
-                                data: _.map(data, raw => raw[mood.Name]),
-                                backgroundColor: Chart.helpers.color(mood.Color).alpha(0.1).rgbString(),
-                                borderColor: mood.Color
+                                label: mood.name,
+                                data: _.map(data, raw => raw[mood.name]),
+                                backgroundColor: Chart.helpers.color(mood.color).alpha(0.1).rgbString(),
+                                borderColor: mood.color
                             }
                         })
                     },

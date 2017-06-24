@@ -26,9 +26,9 @@ export class MoodDominantsCustomElement {
                         labels: _.map(data, g => g.DayNumber),
                         datasets: _.map(this.moods, mood => {
                             return {
-                                label: mood.Name,
-                                data: _.map(data, raw => raw[mood.Name]),
-                                backgroundColor: mood.Color
+                                label: mood.name,
+                                data: _.map(data, raw => raw[mood.name]),
+                                backgroundColor: mood.color
                             }
                         })
                     },
