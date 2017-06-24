@@ -14,7 +14,7 @@ export class MoodHourlyCustomElement {
         this._element = element;
         this.moods = COMMON_MOODS;
 
-        var endPeriod = moment().endOf('day');
+        var endPeriod = moment().endOf('day');  
         var startPeriod = moment(endPeriod).add(-30, 'days');
 
         http.fetch(`/api/charts/HourlyMoodsCounts?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
