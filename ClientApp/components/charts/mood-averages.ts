@@ -22,6 +22,8 @@ export class MoodAveragesCustomElement {
     }
 
     public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {        
+        if(this._chart != null) this._chart.destroy();
+
         this._http.fetch(`/api/charts/DayMoodsAverages?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
             .then(result => result.json() as Promise<DayAverages[]>)
             .then(data => {

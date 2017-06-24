@@ -1,5 +1,6 @@
+import { DatesRange } from './../date-range/date-range';
 import { HttpClient } from 'aurelia-fetch-client';
-import { inject } from 'aurelia-framework';
+import { inject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
@@ -7,20 +8,26 @@ import { COMMON_MOODS, Mood } from '../../utils';
 
 @inject(Element, HttpClient)
 export class NeutralPercentCustomElement {
+    @bindable public range: DatesRange;
     public moods: Mood[];
+
     private _element: Element;
+    private _http: HttpClient;
+    private _chart: any;
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
         this.moods = COMMON_MOODS;
+        this._http = http;
+    }
 
-        var endPeriod = moment().endOf('day');
-        var startPeriod = moment(endPeriod).add(-30, 'days');
+    public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {
 
-        http.fetch(`/api/charts/WeekDayNonNeutralPercent?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
+        if(this._chart != null) this._chart.destroy();
+        this._http.fetch(`/api/charts/WeekDayNonNeutralPercent?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
             .then(result => result.json() as Promise<WeekDayStats[]>)
             .then(data => {
-                var chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
+                this._chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'line',
                     data: {
                         labels: _.map(data, g => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'][g.WeekDay - 1]),

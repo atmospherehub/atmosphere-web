@@ -1,5 +1,6 @@
+import { DatesRange } from './../date-range/date-range';
 import { HttpClient } from 'aurelia-fetch-client';
-import { inject } from 'aurelia-framework';
+import { inject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
@@ -8,19 +9,24 @@ import { COMMON_MOODS, Mood } from '../../utils';
 @inject(Element, HttpClient)
 export class MoodDominantsCustomElement {
     public moods: Mood[];
+    @bindable public range: DatesRange;
+
     private _element: Element;
+    private _http: HttpClient;
+    private _chart: any;
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
+        this._http = http;
         this.moods = COMMON_MOODS;
+    }
+    public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {
+        if(this._chart != null) this._chart.destroy();
 
-        var endPeriod = moment().endOf('day');
-        var startPeriod = moment(endPeriod).add(-30, 'days');
-
-        http.fetch(`/api/charts/DayDominantMoodsCounts?from=${startPeriod.toISOString()}&to=${endPeriod.toISOString()}`)
+        this._http.fetch(`/api/charts/DayDominantMoodsCounts?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
             .then(result => result.json() as Promise<DayDominants[]>)
             .then(data => {
-                var chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
+                this._chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
                     type: 'bar',
                     data: {
                         labels: _.map(data, g => g.DayNumber),
@@ -55,7 +61,7 @@ export class MoodDominantsCustomElement {
                             xAxes: [{
                                 stacked: true,
                                 gridLines: {
-                                    display : false,
+                                    display: false,
                                 }
                             }]
                         }
