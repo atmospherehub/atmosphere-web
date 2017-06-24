@@ -5,15 +5,15 @@ import * as moment from 'moment';
 
 @inject(Element)
 export class DateRangeCustomElement {
+    public Start: moment.Moment;
+    public End: moment.Moment;
+    public DatesRangeText: string;
     private _element: Element;
-    private _start: moment.Moment;
-    private _end: moment.Moment;
-    public selectedDatesRangeText: string;
 
     constructor(element: Element) {
         this._element = element;
-        this._start = moment().startOf('month');
-        this._end = moment().endOf('day');
+        this.Start = moment().startOf('month');
+        this.End = moment().endOf('day');
     }
 
     attached() {
@@ -24,9 +24,9 @@ export class DateRangeCustomElement {
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                 'This Month': [moment().startOf('month'), moment()]
             },
-            'startDate': this._start,
-            'endDate': this._end,
-            'maxDate': this._end,
+            'startDate': this.Start,
+            'endDate': this.End,
+            'maxDate': this.End,
             'opens': 'left',
             'applyClass': 'btn-primary'
         }, (start, end) => this.selectDatesRange(start, end))
@@ -43,20 +43,20 @@ export class DateRangeCustomElement {
     }
 
     selectDatesRange(start, end) {
-        this._start = start;
-        this._end = end;
+        this.Start = start;
+        this.End = end;
 
         // handle shortest possible display
         let sameYear = start.year() == end.year();
         let sameYearAndMonth = sameYear && start.month() == end.month();
         let sameYearMonthAndDay = sameYearAndMonth && start.day() == end.day();
         if (sameYearMonthAndDay) {
-            this.selectedDatesRangeText = start.format(`MMM D YYYY`);
+            this.DatesRangeText = start.format(`MMM D YYYY`);
         }
         else {
             let startFormat = start.format(`MMM D${sameYear ? '' : ', YYYY'}`);
             let endFormat = end.format(`${sameYearAndMonth ? '' : 'MMM'} D, YYYY`);
-            this.selectedDatesRangeText = `${startFormat} - ${endFormat}`;
+            this.DatesRangeText = `${startFormat} - ${endFormat}`;
         }
     }
 }
