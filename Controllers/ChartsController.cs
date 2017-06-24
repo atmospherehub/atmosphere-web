@@ -1,7 +1,9 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AtmosphereWeb.Controllers
@@ -10,6 +12,24 @@ namespace AtmosphereWeb.Controllers
     public class ChartsController : Controller
     {
         private readonly DbConnection _connection;
+        private static readonly List<string> _groupParts = new List<string> {
+            "DATEPART(YEAR, [Time] AT TIME ZONE 'Israel Standard Time')",
+            "DATEPART(MONTH, [Time] AT TIME ZONE 'Israel Standard Time')",
+            "DATEPART(DAY, [Time] AT TIME ZONE 'Israel Standard Time')",
+            "DATEPART(HOUR, [Time] AT TIME ZONE 'Israel Standard Time')",
+            "DATEPART(MINUTE, [Time] AT TIME ZONE 'Israel Standard Time')",
+            "DATEPART(SECOND, [Time] AT TIME ZONE 'Israel Standard Time')"
+        };
+        private static readonly HashSet<string> _moodsColumns = new HashSet<string> {
+            "CognitiveContempt",
+            "CognitiveDisgust",
+            "CognitiveFear",
+            "CognitiveHappiness",
+            "CognitiveNeutral",
+            "CognitiveSadness",
+            "CognitiveSurprise",
+            "CognitiveAnger",
+        };
 
         public ChartsController(DbConnection connection)
         {
@@ -27,7 +47,7 @@ namespace AtmosphereWeb.Controllers
             await _connection.OpenAsync();
             return Ok(await _connection.QueryAsync($@"
                 SELECT 
-                    DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') AS [Group]
+                    {@datePart.selectPart} AS [Group]
                     ,MIN([Time]) AS [StartTime]
                     ,AVG([CognitiveAnger]) AS AvgAnger                    
                     ,AVG([CognitiveContempt]) AS AvgContempt                    
@@ -39,7 +59,7 @@ namespace AtmosphereWeb.Controllers
                     ,AVG([CognitiveSurprise]) AS AvgSurprise
                 FROM [dbo].[Faces]
                 WHERE [Time] >= @start AND [Time] <= @end
-                GROUP BY DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') 
+                GROUP BY {@datePart.groupByPart} 
                 HAVING COUNT(*) > @minFacesInDay
                 ORDER BY [StartTime]",
                 new
@@ -61,76 +81,20 @@ namespace AtmosphereWeb.Controllers
             await _connection.OpenAsync();
             return Ok(await _connection.QueryAsync($@"
                 SELECT 
-                    DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') AS [Group]
+                    {@datePart.selectPart} AS [Group]
                     ,MIN([Time]) AS [StartTime]
 					,COUNT(*) [Total]
-                    ,SUM(CASE WHEN 
-                            CognitiveAnger > CognitiveContempt AND 
-                            CognitiveAnger > CognitiveDisgust AND 
-                            CognitiveAnger > CognitiveFear AND
-                            CognitiveAnger > CognitiveHappiness AND 
-                            CognitiveAnger > CognitiveNeutral AND 
-                            CognitiveAnger > CognitiveSadness AND 
-                            CognitiveAnger > CognitiveSurprise THEN 1 ELSE 0 END) AS Anger
-                    ,SUM(CASE WHEN 
-                            CognitiveContempt > CognitiveAnger AND 
-                            CognitiveContempt > CognitiveDisgust AND 
-                            CognitiveContempt > CognitiveFear AND
-                            CognitiveContempt > CognitiveHappiness AND 
-                            CognitiveContempt > CognitiveNeutral AND 
-                            CognitiveContempt > CognitiveSadness AND 
-                            CognitiveContempt > CognitiveSurprise THEN 1 ELSE 0 END) AS Contempt
-                    ,SUM(CASE WHEN 
-                            CognitiveDisgust > CognitiveAnger AND 
-                            CognitiveDisgust > CognitiveContempt AND 
-                            CognitiveDisgust > CognitiveFear AND
-                            CognitiveDisgust > CognitiveHappiness AND 
-                            CognitiveDisgust > CognitiveNeutral AND 
-                            CognitiveDisgust > CognitiveSadness AND 
-                            CognitiveDisgust > CognitiveSurprise THEN 1 ELSE 0 END) AS Disgust
-                    ,SUM(CASE WHEN 
-                            CognitiveFear > CognitiveAnger AND 
-                            CognitiveFear > CognitiveContempt AND 
-                            CognitiveFear > CognitiveDisgust AND
-                            CognitiveFear > CognitiveHappiness AND 
-                            CognitiveFear > CognitiveNeutral AND 
-                            CognitiveFear > CognitiveSadness AND 
-                            CognitiveFear > CognitiveSurprise THEN 1 ELSE 0 END) AS Fear
-                    ,SUM(CASE WHEN 
-                            CognitiveHappiness > CognitiveAnger AND 
-                            CognitiveHappiness > CognitiveContempt AND 
-                            CognitiveHappiness > CognitiveDisgust AND
-                            CognitiveHappiness > CognitiveFear AND 
-                            CognitiveHappiness > CognitiveNeutral AND 
-                            CognitiveHappiness > CognitiveSadness AND 
-                            CognitiveHappiness > CognitiveSurprise THEN 1 ELSE 0 END) AS Happiness
-                    ,SUM(CASE WHEN 
-                            CognitiveNeutral > CognitiveAnger AND 
-                            CognitiveNeutral > CognitiveContempt AND 
-                            CognitiveNeutral > CognitiveDisgust AND
-                            CognitiveNeutral > CognitiveFear AND 
-                            CognitiveNeutral > CognitiveHappiness AND 
-                            CognitiveNeutral > CognitiveSadness AND 
-                            CognitiveNeutral > CognitiveSurprise THEN 1 ELSE 0 END) AS Neutral
-                    ,SUM(CASE WHEN 
-                            CognitiveSadness > CognitiveAnger AND 
-                            CognitiveSadness > CognitiveContempt AND 
-                            CognitiveSadness > CognitiveDisgust AND
-                            CognitiveSadness > CognitiveFear AND 
-                            CognitiveSadness > CognitiveHappiness AND 
-                            CognitiveSadness > CognitiveNeutral AND 
-                            CognitiveSadness > CognitiveSurprise THEN 1 ELSE 0 END) AS Sadness
-                    ,SUM(CASE WHEN 
-                            CognitiveSurprise > CognitiveAnger AND 
-                            CognitiveSurprise > CognitiveContempt AND 
-                            CognitiveSurprise > CognitiveDisgust AND
-                            CognitiveSurprise > CognitiveFear AND 
-                            CognitiveSurprise > CognitiveHappiness AND 
-                            CognitiveSurprise > CognitiveNeutral AND 
-                            CognitiveSurprise > CognitiveSadness THEN 1 ELSE 0 END) AS Surprise
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveAnger")} THEN 1 ELSE 0 END) AS Anger
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveContempt")} THEN 1 ELSE 0 END) AS Contempt
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveDisgust")} THEN 1 ELSE 0 END) AS Disgust
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveFear")} THEN 1 ELSE 0 END) AS Fear
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveHappiness")} THEN 1 ELSE 0 END) AS Happiness
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveNeutral")} THEN 1 ELSE 0 END) AS Neutral
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveSadness")} THEN 1 ELSE 0 END) AS Sadness
+                    ,SUM(CASE WHEN {dominantCondition("CognitiveSurprise")} THEN 1 ELSE 0 END) AS Surprise
                 FROM [dbo].[Faces]
                 WHERE [Time] >= @start AND [Time] <= @end
-                GROUP BY DATEPART({@datePart}, [Time] AT TIME ZONE 'Israel Standard Time') 
+                GROUP BY {@datePart.groupByPart}
                 HAVING COUNT(*) > @minFacesInDay
                 ORDER BY [StartTime]",
                 new
@@ -232,17 +196,24 @@ namespace AtmosphereWeb.Controllers
                 }));
         }
 
-        private string datePartFromRange(DateTimeOffset from, DateTimeOffset to)
+        private (string selectPart, string groupByPart) datePartFromRange(DateTimeOffset from, DateTimeOffset to)
         {
             var range = to - from;
             if (range < TimeSpan.FromMinutes(120))
-                return "MINUTE";
-            else if (range < TimeSpan.FromHours(48))
-                return "HOUR";
+                return (String.Join(", ", _groupParts.Take(5)), _groupParts[4]);
+            else if (range < TimeSpan.FromDays(14))
+                return (String.Join(", ", _groupParts.Take(4)), _groupParts[3]);
             else if (range < TimeSpan.FromDays(90))
-                return "DAY";
+                return (String.Join(", ", _groupParts.Take(3)), _groupParts[2]);
             else
-                return "MONTH";
+                return (String.Join(", ", _groupParts.Take(2)), _groupParts[1]);
+        }
+
+        private string dominantCondition(string mood) {
+
+            return String.Join(" AND ", _moodsColumns
+                .Where(m => m != mood)
+                .Select(m => $"{mood} > {m}"));
         }
     }
 }
