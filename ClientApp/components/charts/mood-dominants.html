@@ -4,15 +4,10 @@
             <h4 class="title">Moods Dominations</h4>
         </div>
         <div class="content">
-            <div class="chart-container" style="position: relative; height:262px">
+            <div class="chart-container" style="position: relative; height:302px">
                 <canvas></canvas>
             </div>
             <div class="footer">
-                <div class="legend">
-                    <span repeat.for="mood of moods">
-                        <i class="fa fa-circle" css="color: ${ mood.color }"></i> ${ mood.name }
-                    </span>
-                </div>  
                 <hr>
                 <div class="stats"><span><i class="fa fa-info-circle"></i> Dominating mood is the one which has a highest score for a person</span></div>
             </div>

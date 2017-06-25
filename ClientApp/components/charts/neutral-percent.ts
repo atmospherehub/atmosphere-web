@@ -4,12 +4,10 @@ import { inject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
-import { COMMON_MOODS, Mood } from '../../utils';
 
 @inject(Element, HttpClient)
 export class NeutralPercentCustomElement {
     @bindable public range: DatesRange;
-    public moods: Mood[];
 
     private _element: Element;
     private _http: HttpClient;
@@ -17,7 +15,6 @@ export class NeutralPercentCustomElement {
 
     constructor(element: Element, http: HttpClient) {
         this._element = element;
-        this.moods = COMMON_MOODS;
         this._http = http;
     }
 

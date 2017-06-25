@@ -1,10 +1,10 @@
 import {bindable} from 'aurelia-framework';
 
 export class MoodsSelectionCustomElement {
-    @bindable private _moodsSelection: ItemSelected<Mood>[];
+    @bindable private Moods: ItemSelected<Mood>[];
 
-    constructor() {
-        this._moodsSelection = [{
+    attached(){
+        this.Moods = [{
             isSelected: true,
             item: {
                 name: 'Anger',
@@ -47,6 +47,7 @@ export class MoodsSelectionCustomElement {
                 color: 'rgb(255, 159, 64)'
             }
         }];
+
     }
 
     public toggleMood(item: ItemSelected<Mood>)
@@ -55,7 +56,7 @@ export class MoodsSelectionCustomElement {
     }
 }
 
-interface ItemSelected<T> {
+export interface ItemSelected<T> {
     item: T;
     isSelected: boolean;
 }

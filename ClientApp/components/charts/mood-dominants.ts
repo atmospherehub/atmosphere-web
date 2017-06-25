@@ -1,15 +1,15 @@
 import { DatesRange } from './../date-range/date-range';
+import { ItemSelected, Mood } from './../moods-selection/moods-selection';
 import { HttpClient } from 'aurelia-fetch-client';
 import { inject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
-import { COMMON_MOODS, Mood } from '../../utils';
 
 @inject(Element, HttpClient)
 export class MoodDominantsCustomElement {
-    public moods: Mood[];
     @bindable public range: DatesRange;
+    @bindable public moods: ItemSelected<Mood>[];
 
     private _element: Element;
     private _http: HttpClient;
@@ -18,7 +18,6 @@ export class MoodDominantsCustomElement {
     constructor(element: Element, http: HttpClient) {
         this._element = element;
         this._http = http;
-        this.moods = COMMON_MOODS;
     }
     public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {
         if(this._chart != null) this._chart.destroy();
@@ -32,9 +31,9 @@ export class MoodDominantsCustomElement {
                         labels: _.map(data, g => g.Group),
                         datasets: _.map(this.moods, mood => {
                             return {
-                                label: mood.name,
-                                data: _.map(data, raw => raw[mood.name]),
-                                backgroundColor: mood.color
+                                label: mood.item.name,
+                                data: _.map(data, raw => raw[mood.item.name]),
+                                backgroundColor: mood.item.color
                             }
                         })
                     },

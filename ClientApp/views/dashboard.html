@@ -10,20 +10,20 @@
     <div class="row">
         <div class="col-md-12">
             <date-range range.two-way="range"></date-range>
-            <moods-selection></moods-selection>
+            <moods-selection moods.two-way="moods"></moods-selection>
         </div>
     </div>
     <div class="row">
         <div class="col-md-9">
-            <mood-averages range.bind="range"></mood-averages>
+            <mood-averages range.bind="range" moods.bind="moods"></mood-averages>
         </div>
         <div class="col-md-3">
-            <mood-hourly range.bind="range"></mood-hourly>
+            <mood-hourly range.bind="range" moods.bind="moods"></mood-hourly>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
-            <mood-dominants range.bind="range"></mood-dominants>
+            <mood-dominants range.bind="range" moods.bind="moods"></mood-dominants>
         </div>
         <div class="col-md-3">
             <people-together range.bind="range"></people-together>
