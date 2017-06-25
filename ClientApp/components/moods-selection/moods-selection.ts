@@ -64,16 +64,3 @@ export interface Mood {
     name: string;
     color: string;
 }
-
-export class BackgroundCssValueConverter {
-  toView(value) {
-      console.log(value);
-      return value.isSelected ? value.item.color : 'transparent';
-  }
-}
-
-export class ColorCssValueConverter {
-  toView(value) {
-    return value.isSelected ? '#fff' : value.item.color;
-  }
-}
