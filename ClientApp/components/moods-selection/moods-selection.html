@@ -1,0 +1,10 @@
+<template>
+    <require from="./moods-selection.css"></require>
+    <div class="pull-right moods-selection-wrapper">
+        <span title="Click to filter"><i class="fa fa-filter"></i></span>        
+        <button class="btn btn-default btn-xs" 
+            repeat.for="selection of _moodsSelection" 
+            css="background-color: ${ selection.isSelected ? selection.item.color : 'transparent' }; color: ${ selection.isSelected ? null : selection.item.color }; border-color: ${ selection.item.color }"
+            click.delegate="toggleMood(selection)">${ selection.item.name }</button>              
+    </div>
+</template>

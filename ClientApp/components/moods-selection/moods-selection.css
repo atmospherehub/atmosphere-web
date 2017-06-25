@@ -1,0 +1,19 @@
+.moods-selection-wrapper{
+    border: solid 1px #797979;
+    border-radius: 4px;
+    padding: 8px 9px;
+    margin-right: 10px;
+    color: #797979;
+    opacity: 0.8
+}
+
+.moods-selection-wrapper button{
+    margin-right: 7px;
+    color: #fff;
+    border-width: 1px
+}
+.moods-selection-wrapper button:hover,
+.moods-selection-wrapper button:active,
+.moods-selection-wrapper button:focus{
+    color: #fff;
+}

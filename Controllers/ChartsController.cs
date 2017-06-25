@@ -203,7 +203,7 @@ namespace AtmosphereWeb.Controllers
                 return (_groupParts[4], String.Join(", ", _groupParts.Take(5)));
             else if (range < TimeSpan.FromDays(14))
                 return (_groupParts[3], String.Join(", ", _groupParts.Take(4)));
-            else if (range < TimeSpan.FromDays(90))
+            else if (range < TimeSpan.FromDays(200))
                 return (_groupParts[2], String.Join(", ", _groupParts.Take(3)));
             else
                 return (_groupParts[1], String.Join(", ", _groupParts.Take(2)));
