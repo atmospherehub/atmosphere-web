@@ -200,13 +200,13 @@ namespace AtmosphereWeb.Controllers
         {
             var range = to - from;
             if (range < TimeSpan.FromMinutes(120))
-                return (String.Join(", ", _groupParts.Take(5)), _groupParts[4]);
+                return (_groupParts[4], String.Join(", ", _groupParts.Take(5)));
             else if (range < TimeSpan.FromDays(14))
-                return (String.Join(", ", _groupParts.Take(4)), _groupParts[3]);
+                return (_groupParts[3], String.Join(", ", _groupParts.Take(4)));
             else if (range < TimeSpan.FromDays(90))
-                return (String.Join(", ", _groupParts.Take(3)), _groupParts[2]);
+                return (_groupParts[2], String.Join(", ", _groupParts.Take(3)));
             else
-                return (String.Join(", ", _groupParts.Take(2)), _groupParts[1]);
+                return (_groupParts[1], String.Join(", ", _groupParts.Take(2)));
         }
 
         private string dominantCondition(string mood) {
