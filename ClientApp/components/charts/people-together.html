@@ -1,7 +1,8 @@
 <template>
+    <require from="../spinner/spinner.html"></require>
     <div class="card">
         <div class="header">
-            <h4 class="title">People Together</h4>
+            <h4 class="title">People Together <spinner show.bind="isLoading"></spinner></h4>
         </div>
         <div class="content">
             <div class="chart-container" style="position: relative; height:283px">

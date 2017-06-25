@@ -1,9 +1,10 @@
 <template>
+    <require from="../spinner/spinner.html"></require>
     <div class="card">
         <div class="header">
-            <h4 class="title">Moods Averages</h4>
+            <h4 class="title">Moods Averages <spinner show.bind="isLoading"></spinner></h4>
         </div>
-        <div class="content">
+        <div class="content">            
             <div class="chart-container" style="position: relative; height:280px">
                 <canvas></canvas>
             </div>
