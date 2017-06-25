@@ -1,67 +1,32 @@
-import {bindable} from 'aurelia-framework';
+import { Toolbar, Mood } from './../../services/toolbar';
+import * as _ from 'underscore'
+import { bindable, inject } from 'aurelia-framework';
 
+@inject(Toolbar)
 export class MoodsSelectionCustomElement {
-    @bindable private Moods: ItemSelected<Mood>[];
+    private _moodsSelection: MoodWrapper[];
+    private _toolbar: Toolbar;
 
-    attached(){
-        this.Moods = [{
-            isSelected: true,
-            item: {
-                name: 'Anger',
-                color: 'rgb(255, 99, 132)'
+    constructor(toolbar: Toolbar) {
+        this._toolbar = toolbar;
+        this._moodsSelection = _.map(toolbar.moods, m => {
+            return {
+                isSelected: true,
+                item: m
             }
-        }, {
-            isSelected: true,
-            item: {
-                name: 'Contempt',
-                color: 'rgb(54, 162, 235)'
-            }
-        }, {
-            isSelected: true,
-            item: {
-                name: 'Disgust',
-                color: 'rgb(255, 205, 86)'
-            }
-        }, {
-            isSelected: true,
-            item: {
-                name: 'Fear',
-                color: 'rgb(201, 203, 207)'
-            }
-        }, {
-            isSelected: true,
-            item: {
-                name: 'Happiness',
-                color: 'rgb(75, 192, 192)'
-            }
-        }, {
-            isSelected: true,
-            item: {
-                name: 'Sadness',
-                color: 'rgb(153, 102, 255)'
-            }
-        }, {
-            isSelected: true,
-            item: {
-                name: 'Surprise',
-                color: 'rgb(255, 159, 64)'
-            }
-        }];
-
+        });
     }
 
-    public toggleMood(item: ItemSelected<Mood>)
-    {
+    public toggleMood(item: MoodWrapper) {
         item.isSelected = !item.isSelected;
+        if (item.isSelected)
+            this._toolbar.moods.push(item.item);
+        else
+            this._toolbar.moods.splice(this._toolbar.moods.indexOf(item.item), 1);
     }
 }
 
-export interface ItemSelected<T> {
-    item: T;
+interface MoodWrapper {
+    item: Mood;
     isSelected: boolean;
-}
-
-export interface Mood {
-    name: string;
-    color: string;
 }

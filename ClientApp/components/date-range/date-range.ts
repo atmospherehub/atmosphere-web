@@ -2,19 +2,20 @@ import { bindable, inject } from 'aurelia-framework';
 import * as $ from 'jquery'
 import 'bootstrap-daterangepicker';
 import * as moment from 'moment';
+import { Toolbar, DatesRange } from './../../services/toolbar';
 
-@inject(Element)
+@inject(Element, Toolbar)
 export class DateRangeCustomElement {
-    @bindable public range: DatesRange;
-    public DatesRangeText: string;
+    private _datesRangeText: string;
     private _element: Element;
+    private _toolbar: Toolbar;
 
-    constructor(element: Element) {
+    constructor(element: Element, toolbar: Toolbar) {
         this._element = element;
+        this._toolbar = toolbar;
     }
 
     attached() {
-        this.range = new DatesRange(moment().startOf('month'), moment().endOf('day'));
         let pickerOptions = {
             ranges: {
                 'Today': [moment(), moment()],
@@ -23,9 +24,9 @@ export class DateRangeCustomElement {
                 'This Month': [moment().startOf('month'), moment()],
                 'Last 3 Months': [moment().subtract(3, 'months'), moment()],
             },
-            startDate: this.range.start,
-            endDate: this.range.end,
-            maxDate: this.range.end,
+            startDate: this._toolbar.range.start,
+            endDate: this._toolbar.range.end,
+            maxDate: this._toolbar.range.end,
             opens: 'left',
             applyClass: 'btn-primary'
         };
@@ -33,7 +34,7 @@ export class DateRangeCustomElement {
         let picker = $('.range-picker', this._element).daterangepicker(
             pickerOptions,
             (start, end) => {
-                this.range = new DatesRange(start, end);
+                this._toolbar.range = new DatesRange(start, end);
                 this.setNiceText();
             }).on('show.daterangepicker', (e, popup) => {
                 picker.addClass('active');
@@ -48,26 +49,17 @@ export class DateRangeCustomElement {
     }
 
     setNiceText() {
-        let sameYear = this.range.start.year() == this.range.end.year();
-        let sameYearAndMonth = sameYear && this.range.start.month() == this.range.end.month();
-        let sameYearMonthAndDay = sameYearAndMonth && this.range.start.day() == this.range.end.day();
+        let r = this._toolbar.range;
+        let sameYear = r.start.year() == r.end.year();
+        let sameYearAndMonth = sameYear && r.start.month() == r.end.month();
+        let sameYearMonthAndDay = sameYearAndMonth && r.start.day() == r.end.day();
         if (sameYearMonthAndDay) {
-            this.DatesRangeText = this.range.start.format(`MMM D YYYY`);
+            this._datesRangeText = r.start.format(`MMM D YYYY`);
         }
         else {
-            let startFormat = this.range.start.format(`MMM D${sameYear ? '' : ', YYYY'}`);
-            let endFormat = this.range.end.format(`${sameYearAndMonth ? '' : 'MMM'} D, YYYY`);
-            this.DatesRangeText = `${startFormat} - ${endFormat}`;
+            let startFormat = r.start.format(`MMM D${sameYear ? '' : ', YYYY'}`);
+            let endFormat = r.end.format(`${sameYearAndMonth ? '' : 'MMM'} D, YYYY`);
+            this._datesRangeText = `${startFormat} - ${endFormat}`;
         }
-    }
-}
-
-export class DatesRange {
-    start: moment.Moment;
-    end: moment.Moment;
-
-    constructor(start: moment.Moment, end: moment.Moment) {
-        this.start = start;
-        this.end = end;
     }
 }

@@ -1,72 +1,68 @@
-import { DatesRange } from './../date-range/date-range';
-import { ItemSelected, Mood } from './../moods-selection/moods-selection';
 import { HttpClient } from 'aurelia-fetch-client';
 import { inject, bindable } from 'aurelia-framework';
-import * as _ from 'underscore'
 import { Chart } from 'chart.js';
-import * as moment from 'moment';
+import * as _ from 'underscore'
+import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
+import { BaseChartCustomElement } from "./base-chart";
 
-@inject(Element, HttpClient)
-export class MoodDominantsCustomElement {
-    @bindable public range: DatesRange;
-    @bindable public moods: ItemSelected<Mood>[];
+@inject(Element, HttpClient, Toolbar)
+export class MoodDominantsCustomElement extends BaseChartCustomElement<DayDominants> {
 
-    private _element: Element;
-    private _http: HttpClient;
-    private _chart: any;
-
-    constructor(element: Element, http: HttpClient) {
-        this._element = element;
-        this._http = http;
+    constructor(element: Element, http: HttpClient, toolbar: Toolbar) {
+        super(element, http, toolbar);
     }
-    public rangeChanged(newValue: moment.Moment, oldValue: moment.Moment) {
-        if(this._chart != null) this._chart.destroy();
 
-        this._http.fetch(`/api/charts/DominantMoodsCounts?from=${this.range.start.toISOString()}&to=${this.range.end.toISOString()}`)
-            .then(result => result.json() as Promise<DayDominants[]>)
-            .then(data => {
-                this._chart = new Chart(this._element.getElementsByTagName('canvas')[0], {
-                    type: 'bar',
-                    data: {
-                        labels: _.map(data, g => g.Group),
-                        datasets: _.map(this.moods, mood => {
-                            return {
-                                label: mood.item.name,
-                                data: _.map(data, raw => raw[mood.item.name]),
-                                backgroundColor: mood.item.color
-                            }
-                        })
-                    },
-                    options: {
-                        legend: {
+    getData(range: DatesRange): Promise<DayDominants[]> {
+        return this._http.fetch(`/api/charts/DominantMoodsCounts?from=${range.start.toISOString()}&to=${range.end.toISOString()}`)
+            .then(result => result.json() as Promise<DayDominants[]>);
+    }
+
+    createChart(bindingData: any): Chart {
+        return new Chart(this._element.getElementsByTagName('canvas')[0], {
+            type: 'bar',
+            data: bindingData,
+            options: {
+                legend: {
+                    display: false
+                },
+                maintainAspectRatio: false,
+                tooltips: {
+                    mode: 'index',
+                    intersect: true
+                },
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
                             display: false
                         },
-                        maintainAspectRatio: false,
-                        tooltips: {
-                            mode: 'index',
-                            intersect: true
-                        },
-                        responsive: true,
-                        scales: {
-                            yAxes: [{
-                                stacked: true,
-                                ticks: {
-                                    display: false
-                                },
-                                gridLines: {
-                                    color: "rgba(0, 0, 0, 0)",
-                                }
-                            }],
-                            xAxes: [{
-                                stacked: true,
-                                gridLines: {
-                                    display: false,
-                                }
-                            }]
+                        gridLines: {
+                            color: "rgba(0, 0, 0, 0)",
                         }
-                    }
-                });
-            });
+                    }],
+                    xAxes: [{
+                        stacked: true,
+                        gridLines: {
+                            display: false,
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    getBindingData(moods: Mood[], data: DayDominants[]): any {
+        return {
+            labels: _.map(data, g => g.Group),
+            datasets: _.map(this._toolbar.moods, mood => {
+                return {
+                    label: mood.name,
+                    data: _.map(data, raw => raw[mood.name]),
+                    backgroundColor: mood.color
+                }
+            })
+        };
     }
 }
 
