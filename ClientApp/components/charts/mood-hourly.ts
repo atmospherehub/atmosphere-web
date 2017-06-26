@@ -1,20 +1,19 @@
+import { RestApi } from './../../services/rest-api';
 import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
-import { HttpClient } from 'aurelia-fetch-client';
 import { inject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import { BaseChartCustomElement } from './base-chart';
 
-@inject(Element, HttpClient, Toolbar)
+@inject(Element, RestApi, Toolbar)
 export class MoodHourlyCustomElement extends BaseChartCustomElement<HourlyMoods> {
 
-    constructor(element: Element, http: HttpClient, toolbar: Toolbar) {
-        super(element, http, toolbar);
+    constructor(element: Element, api: RestApi, toolbar: Toolbar) {
+        super(element, api, toolbar);
     }
 
     getData(range: DatesRange): Promise<HourlyMoods[]> {
-        return this._http.fetch(`/api/charts/HourlyMoodsCounts?from=${range.start.toISOString()}&to=${range.end.toISOString()}`)
-            .then(result => result.json() as Promise<HourlyMoods[]>)
+        return this._api.get<HourlyMoods[]>(`/charts/HourlyMoodsCounts?from=${range.start.toISOString()}&to=${range.end.toISOString()}`)
             .then(data => _.sortBy(data, h => h.Hour >= 8 && h.Hour < 12 ? h.Hour + 12 : h.Hour));
     }
 

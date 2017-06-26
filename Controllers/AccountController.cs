@@ -46,7 +46,7 @@ namespace AtmosphereWeb.Controllers
                 Audience = _tokenParameters.ValidAudience,
                 SigningCredentials = new SigningCredentials(_tokenParameters.IssuerSigningKey, SecurityAlgorithms.HmacSha256Signature),
                 Subject = identity,
-                Expires = DateTime.UtcNow.AddSeconds(10)
+                Expires = DateTime.UtcNow.AddMinutes(20)
             });
             handler.CreateJwtSecurityToken();
 

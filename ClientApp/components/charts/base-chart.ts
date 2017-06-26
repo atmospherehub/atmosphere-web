@@ -1,20 +1,20 @@
+import { RestApi } from './../../services/rest-api';
 import { Disposable } from 'aurelia-binding/dist/aurelia-binding';
 import { Subscription } from 'aurelia-event-aggregator';
 import { Chart } from 'chart.js';
-import { HttpClient } from 'aurelia-fetch-client';
 import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
 
 export abstract class BaseChartCustomElement<T> {
     protected _toolbar: Toolbar;
     protected _element: Element;
-    protected _http: HttpClient;
     protected _chart: Chart;
     protected _toolbarChanges: Subscription;
+    protected _api: RestApi;
     public isLoading: boolean;
 
-    constructor(element: Element, http: HttpClient, toolbar: Toolbar) {
+    constructor(element: Element, api: RestApi, toolbar: Toolbar) {
         this._element = element;
-        this._http = http;
+        this._api = api;
         this._toolbar = toolbar;
     }
 

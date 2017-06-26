@@ -1,20 +1,20 @@
+import { RestApi } from './../../services/rest-api';
 import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
-import { HttpClient } from 'aurelia-fetch-client';
 import { inject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import { BaseChartCustomElement } from "./base-chart";
 
-@inject(Element, HttpClient, Toolbar)
+@inject(Element, RestApi, Toolbar)
 export class NeutralPercentCustomElement extends BaseChartCustomElement<WeekDayStats> {
 
-    constructor(element: Element, http: HttpClient, toolbar: Toolbar) {
-        super(element, http, toolbar);
+    constructor(element: Element, api: RestApi, toolbar: Toolbar) {
+        super(element, api, toolbar);
     }
 
     getData(range: DatesRange): Promise<WeekDayStats[]> {
-        return this._http.fetch(`/api/charts/WeekDayNonNeutralPercent?from=${range.start.toISOString()}&to=${range.end.toISOString()}`)
-            .then(result => result.json() as Promise<WeekDayStats[]>)
+        return this._api.get<WeekDayStats[]>(
+            `/charts/WeekDayNonNeutralPercent?from=${range.start.toISOString()}&to=${range.end.toISOString()}`);
     }
 
     createChart(bindingData: any): Chart {

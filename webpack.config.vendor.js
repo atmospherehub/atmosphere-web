@@ -21,6 +21,7 @@ module.exports = ({ prod } = {}) => {
             vendor: [
                 'aurelia-event-aggregator',
                 'aurelia-fetch-client',
+                'aurelia-http-client',
                 'aurelia-framework',
                 'aurelia-history-browser',
                 'aurelia-logging-console',
