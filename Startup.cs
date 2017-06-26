@@ -1,11 +1,17 @@
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Data.Common;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Authentication;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AtmosphereWeb
 {
@@ -43,8 +49,8 @@ namespace AtmosphereWeb
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions {
+                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                {
                     HotModuleReplacement = true
                 });
             }
@@ -53,18 +59,40 @@ namespace AtmosphereWeb
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
+            app.UseStaticFiles()
+                .UseCookieAuthentication(new CookieAuthenticationOptions()
+                {
+                    AuthenticationScheme = "Cookie",
+                    AutomaticAuthenticate = true,
+                    AutomaticChallenge = true,
+                    LoginPath = new PathString("/account/login/"),
+                    AccessDeniedPath = new PathString("/account/forbidden/"),
+                    LogoutPath = new PathString("/account/logout/")
+                })
+                .UseJwtBearerAuthentication(new JwtBearerOptions
+                {
+                    AuthenticationScheme = "Bearer",
+                    AutomaticAuthenticate = true,
+                    AutomaticChallenge = true,
+                    SaveToken = true
+                })
+                .UseGoogleAuthentication(new GoogleOptions()
+                {
+                    AuthenticationScheme = "Google",
+                    SignInScheme = "Cookie",
+                    ClientId = Configuration["Authentication:Google:ClientId"],
+                    ClientSecret = Configuration["Authentication:Google:ClientSecret"]
+                })
+                .UseMvc(routes =>
+                {
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=Home}/{action=Index}/{id?}");
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
-            });
+                    routes.MapSpaFallbackRoute(
+                        name: "spa-fallback",
+                        defaults: new { controller = "Home", action = "Index" });
+                });
         }
     }
 }
