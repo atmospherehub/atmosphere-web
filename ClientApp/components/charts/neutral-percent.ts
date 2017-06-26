@@ -64,7 +64,7 @@ export class NeutralPercentCustomElement extends BaseChartCustomElement<WeekDayS
         return {
             labels: _.map(data, g => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'][g.WeekDay - 1]),
             datasets: [{
-                data: _.map(data, g => g.PercentNonNeutral),
+                data: _.map(data, day => _.reduce(moods, (memo, mood) => memo + day['Sum' + mood.name], 0) / day.SumNeutral ),
                 fill: 'end'
             }]
         };
@@ -74,5 +74,12 @@ export class NeutralPercentCustomElement extends BaseChartCustomElement<WeekDayS
 interface WeekDayStats {
     WeekDay: number;
     Total: number;
-    PercentNonNeutral: number;
+    SumAnger: number;
+    SumContempt: number;
+    SumDisgust: number;
+    SumFear: number;
+    SumHappiness: number;
+    SumSadness: number;
+    SumSurprise: number;
+    SumNeutral: number;
 }

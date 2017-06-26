@@ -176,13 +176,14 @@ namespace AtmosphereWeb.Controllers
 				SELECT 
                     DATEPART(WEEKDAY, [Time] AT TIME ZONE 'Israel Standard Time') AS [WeekDay]
 					,COUNT(*) [Total]
-                    ,(SUM(CognitiveAnger) 
-					+ SUM(CognitiveContempt)
-					+ SUM(CognitiveDisgust)
-					+ SUM(CognitiveFear)
-                    + SUM(CognitiveHappiness)
-					+ SUM(CognitiveSadness)
-					+ SUM(CognitiveSurprise)) / SUM(CognitiveNeutral) AS [PercentNonNeutral]
+                    , SUM(CognitiveAnger) AS SumAnger
+					, SUM(CognitiveContempt) AS SumContempt
+					, SUM(CognitiveDisgust) AS SumDisgust
+					, SUM(CognitiveFear) AS SumFear
+                    , SUM(CognitiveHappiness) AS SumHappiness
+					, SUM(CognitiveSadness) AS SumSadness
+					, SUM(CognitiveSurprise) AS SumSurprise
+                    , SUM(CognitiveNeutral) AS SumNeutral
                 FROM [dbo].[Faces]
                 WHERE [Time] >= @start AND [Time] <= @end
                 GROUP BY DATEPART(WEEKDAY, [Time] AT TIME ZONE 'Israel Standard Time') 
