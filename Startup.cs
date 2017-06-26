@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -6,12 +5,11 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Microsoft.AspNetCore.Authentication;
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text;
 
 namespace AtmosphereWeb
 {
@@ -36,12 +34,30 @@ namespace AtmosphereWeb
             services.AddScoped<DbConnection, SqlConnection>(
                 provider => new SqlConnection(provider.GetRequiredService<IConfigurationRoot>().GetConnectionString("AtmosphereDatabase")));
 
+            services.AddSingleton(new TokenValidationParameters
+            {
+                // define what to validate
+                RequireExpirationTime = true,
+                ValidateLifetime = true,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                ValidateAudience = false,
+
+                // define against what to validate
+                ValidIssuer = "atmosphere-web",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Authorization:SymmetricKey"])),
+
+                // from which claims retrieve values
+                NameClaimType = "name",
+                RoleClaimType = "role",
+            });
+
             // Add framework services.
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -60,7 +76,7 @@ namespace AtmosphereWeb
             }
 
             app.UseStaticFiles()
-                .UseCookieAuthentication(new CookieAuthenticationOptions()
+                .UseCookieAuthentication(new CookieAuthenticationOptions
                 {
                     AuthenticationScheme = "Cookie",
                     AutomaticAuthenticate = true,
@@ -74,14 +90,16 @@ namespace AtmosphereWeb
                     AuthenticationScheme = "Bearer",
                     AutomaticAuthenticate = true,
                     AutomaticChallenge = true,
-                    SaveToken = true
+                    SaveToken = true,
+                    TokenValidationParameters = serviceProvider.GetRequiredService<TokenValidationParameters>()
                 })
-                .UseGoogleAuthentication(new GoogleOptions()
+                .UseGoogleAuthentication(new GoogleOptions
                 {
                     AuthenticationScheme = "Google",
                     SignInScheme = "Cookie",
                     ClientId = Configuration["Authentication:Google:ClientId"],
-                    ClientSecret = Configuration["Authentication:Google:ClientSecret"]
+                    ClientSecret = Configuration["Authentication:Google:ClientSecret"],
+                    CallbackPath = "/account/signin-google"
                 })
                 .UseMvc(routes =>
                 {
