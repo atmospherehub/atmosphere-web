@@ -12,6 +12,7 @@
     "aurelia-router": "^1.2.1",
     "bootstrap": "^3.3.7",
     "bootstrap-daterangepicker": "^2.1.25",
+    "cerialize": "^0.1.15",
     "chart.js": "^2.6.0",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.2.1",

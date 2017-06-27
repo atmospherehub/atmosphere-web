@@ -38,7 +38,8 @@ module.exports = ({ prod } = {}) => {
                 'chart.js',
                 'underscore',
                 'moment',
-                'bootstrap-daterangepicker'
+                'bootstrap-daterangepicker',
+                'cerialize'
             ],
         },
         output: {
