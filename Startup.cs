@@ -10,6 +10,10 @@ using System;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authentication;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace AtmosphereWeb
 {
@@ -99,7 +103,8 @@ namespace AtmosphereWeb
                     SignInScheme = "Cookie",
                     ClientId = Configuration["Authentication:Google:ClientId"],
                     ClientSecret = Configuration["Authentication:Google:ClientSecret"],
-                    CallbackPath = "/account/signin-google"
+                    CallbackPath = "/account/signin-google",
+                    Events = new GoogleAuthEvents(Configuration["Authentication:Google:LimitToDomain"])
                 })
                 .UseMvc(routes =>
                 {
@@ -111,6 +116,48 @@ namespace AtmosphereWeb
                         name: "spa-fallback",
                         defaults: new { controller = "Home", action = "Index" });
                 });
+        }
+    }
+
+    internal class GoogleAuthEvents : OAuthEvents
+    {
+        private string _domainName;
+
+        public GoogleAuthEvents(string domainName)
+        {
+            this._domainName = domainName;
+        }
+
+        public override Task RedirectToAuthorizationEndpoint(OAuthRedirectToAuthorizationContext context)
+        {
+            if (!String.IsNullOrEmpty(_domainName))
+            {
+                // this will enforce on Google's side to allow signin only 
+                // with a given domain
+                context = new OAuthRedirectToAuthorizationContext(
+                    context.HttpContext,
+                    context.Options,
+                    context.Properties,
+                    $"{context.RedirectUri}&hd={_domainName}");
+            }
+            return base.RedirectToAuthorizationEndpoint(context);
+        }
+
+        public override Task TicketReceived(TicketReceivedContext context)
+        {
+            if(!String.IsNullOrEmpty(_domainName))
+            {
+                var emailClaim = context.Ticket.Principal.Claims.FirstOrDefault(
+                    c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
+
+                if (emailClaim == null) 
+                    context.Response.Redirect("/account/forbidden?reason=no_email_claim");
+
+                if(emailClaim.Value == null || !emailClaim.Value.ToLower().EndsWith(_domainName))
+                    context.Response.Redirect("/account/forbidden?reason=domain_not_allowed");
+            }
+
+            return base.TicketReceived(context);
         }
     }
 }
