@@ -145,16 +145,22 @@ namespace AtmosphereWeb
 
         public override Task TicketReceived(TicketReceivedContext context)
         {
-            if(!String.IsNullOrEmpty(_domainName))
+            if (!String.IsNullOrEmpty(_domainName))
             {
                 var emailClaim = context.Ticket.Principal.Claims.FirstOrDefault(
                     c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
 
-                if (emailClaim == null) 
+                if (emailClaim == null)
+                {
                     context.Response.Redirect("/account/forbidden?reason=no_email_claim");
+                    context.HandleResponse();
+                }
 
-                if(emailClaim.Value == null || !emailClaim.Value.ToLower().EndsWith(_domainName))
+                if (emailClaim.Value == null || !emailClaim.Value.ToLower().EndsWith(_domainName))
+                {
                     context.Response.Redirect("/account/forbidden?reason=domain_not_allowed");
+                    context.HandleResponse();
+                }
             }
 
             return base.TicketReceived(context);
