@@ -5,9 +5,12 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>AtmosphereWeb</RootNamespace>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+    <ApplicationInsightsResourceId>/subscriptions/f0d5978c-1c41-4dd8-8faa-5973d09a97d4/resourcegroups/dm-common/providers/microsoft.insights/components/dm-atmosphere-web</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/f0d5978c-1c41-4dd8-8faa-5973d09a97d4/resourcegroups/dm-common/providers/microsoft.insights/components/dm-atmosphere-web</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.2" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="1.1.2" />
@@ -27,6 +30,9 @@
   <ItemGroup>
     <!-- Files not to show in IDE -->
     <None Remove="yarn.lock" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
