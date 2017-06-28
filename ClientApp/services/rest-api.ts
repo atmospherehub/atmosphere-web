@@ -21,7 +21,7 @@ export class RestApi {
                 .withDefaults({
                     headers: {
                         'Accept': 'application/json',
-                        'X-Requested-With': 'Fetch'
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
                 .withInterceptor({
