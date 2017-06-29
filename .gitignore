@@ -32,6 +32,7 @@ Obj/
 /ClientApp/dist/
 
 /yarn.lock
+/package-lock.json
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
