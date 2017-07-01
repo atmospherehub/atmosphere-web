@@ -1,0 +1,23 @@
+<template>
+    <require from="./mobile.css"></require>
+
+    <div id="navbar-mobile" class="collapse navbar-collapse has-image">
+        <div class="logo">
+            <a href="/" class="simple-text">
+                    Atmosphere
+                </a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li repeat.for="row of router.navigation" class="${ row.isActive ? 'link-active' : '' }">
+                <a href.bind="row.href">
+                    <i class="fa fa-${ row.settings.icon }"></i>
+                    <p>${ row.title }</p>
+                </a>
+            </li>
+            <li>
+                <a href="#" click.delegate="signOut()">Log out</a>
+            </li>
+        </ul>
+    </div>
+
+</template>

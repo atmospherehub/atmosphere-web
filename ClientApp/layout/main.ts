@@ -1,10 +1,11 @@
 import { Aurelia, PLATFORM, inject } from 'aurelia-framework';
 import { Router, RouterConfiguration } from 'aurelia-router';
-import { AuthService } from "../services/auth";
+import { AuthService } from '../services/auth';
 
 @inject(AuthService)
 export class Main {
     public router: Router;
+    public showMobileNav: boolean = false;
     private _authService: AuthService;
 
     constructor(authService: AuthService) {
@@ -23,6 +24,10 @@ export class Main {
         }]);
 
         this.router = router;
+    }
+
+    public toggleMobileNav(): void {
+        this.showMobileNav = !this.showMobileNav;
     }
 
     public signOut(): void {

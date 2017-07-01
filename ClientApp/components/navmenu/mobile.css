@@ -1,0 +1,163 @@
+#navbar-mobile {
+    position: fixed;
+    display: block;
+    top: 0;
+    height: 100%;
+    right: 0;
+    left: auto;
+    z-index: 1032;
+    visibility: visible;
+    background-color: #999;
+    overflow-y: visible;
+    border-top: none;
+    text-align: left;
+    width: 250px;
+    padding: 0;
+    z-index: 1;
+    color: #fff;
+    font-weight: 200;
+    background-size: cover;
+    background-position: center center;
+    background-image: url(../../layout/sidebar.jpg);
+    
+    -webkit-transform: translate3d(260px, 0, 0);
+    -moz-transform: translate3d(260px, 0, 0);
+    -o-transform: translate3d(260px, 0, 0);
+    -ms-transform: translate3d(260px, 0, 0);
+    transform: translate3d(260px, 0, 0);
+    -webkit-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -moz-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -o-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -ms-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
+}
+
+
+.nav-open #navbar-mobile {
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    -o-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+
+.nav-open .navbar .container {
+    left: -250px;
+}
+
+.nav-open .wrapper {
+    left: 0;
+    -webkit-transform: translate3d(-260px, 0, 0);
+    -moz-transform: translate3d(-260px, 0, 0);
+    -o-transform: translate3d(-260px, 0, 0);
+    -ms-transform: translate3d(-260px, 0, 0);
+    transform: translate3d(-260px, 0, 0);
+}
+
+@media (min-width: 991px) {
+    #navbar-mobile.collapse {
+        display: none !important;
+    }
+    .nav-open .wrapper {
+        -webkit-transform: translate3d(0, 0, 0);
+        -moz-transform: translate3d(0, 0, 0);
+        -o-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+    #navbar-mobile > ul {
+        position: relative;
+        z-index: 4;
+        overflow-y: scroll;
+        height: calc(100vh - 61px);
+        width: 100%;
+    }
+
+    #navbar-mobile::before {
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        background-color: #282828;
+        display: block;
+        content: "";
+        z-index: 1;
+    }
+
+    #navbar-mobile .nav {
+        margin-top: 20px;
+        float: none;
+    }
+
+        #navbar-mobile .nav li > a {
+            color: #FFFFFF;
+            margin: 5px 15px;
+            opacity: .86;
+            border-radius: 4px;
+            display: block;
+        padding: 10px 15px;
+        }
+
+        #navbar-mobile .nav i {
+            font-size: 28px;
+            float: left;
+            margin-right: 15px;
+            line-height: 30px;
+            width: 30px;
+            text-align: center;
+        }
+
+    #navbar-mobile:after,
+    #navbar-mobile:before {
+        display: block;
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 2;
+    }
+
+    #navbar-mobile:before {
+        opacity: .33;
+        background: #000000;
+    }
+
+    #navbar-mobile:after {
+        background: #787878;
+        background: -moz-linear-gradient(top, #787878 0%, #343434 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #787878), color-stop(100%, #343434));
+        background: -webkit-linear-gradient(top, #787878 0%, #343434 100%);
+        background: -o-linear-gradient(top, #787878 0%, #343434 100%);
+        background: -ms-linear-gradient(top, #787878 0%, #343434 100%);
+        background: linear-gradient(to bottom, #787878 0%, #343434 100%);
+        background-size: 150% 150%;
+        z-index: 3;
+        opacity: .77;
+    }
+
+#bodyClick {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    opacity: 0;
+    top: 0;
+    left: auto;
+    right: 250px;
+    content: "";
+    z-index: 9999;
+    overflow-x: hidden;
+}
+
+
+.nav-open .nav .caret {
+    border-bottom-color: #FFFFFF;
+    border-top-color: #FFFFFF;
+}
+
+
+
