@@ -2,7 +2,8 @@ import { RestApi } from './../../services/rest-api';
 import { Disposable } from 'aurelia-binding/dist/aurelia-binding';
 import { Subscription } from 'aurelia-event-aggregator';
 import { Chart } from 'chart.js';
-import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
+import { Toolbar, DatesRange } from './../../services/toolbar';
+import { Mood } from "../../services/moods";
 
 export abstract class BaseChartCustomElement<T> {
     private _data: T[];

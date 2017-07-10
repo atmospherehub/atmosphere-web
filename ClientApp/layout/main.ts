@@ -17,10 +17,18 @@ export class Main {
         config.map([{
             route: ['', 'dashboard'],
             name: 'dashboard',
-            settings: { icon: 'home' },
+            settings: { icon: 'bar-chart' },
             moduleId: PLATFORM.moduleName('../views/dashboard'),
             nav: true,
             title: 'Dashboard'
+        },
+        {
+            route: 'highlights',
+            name: 'highlights',
+            settings: { icon: 'line-chart' },
+            moduleId: PLATFORM.moduleName('../views/highlights'),
+            nav: true,
+            title: 'Highlights'
         }]);
 
         this.router = router;

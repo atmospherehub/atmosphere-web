@@ -3,8 +3,9 @@ import { BindingEngine, inject } from 'aurelia-framework';
 import { getLogger, Logger } from 'aurelia-logging';
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import * as moment from 'moment';
+import { Moods, Mood } from "./moods";
 
-@inject(BindingEngine, EventAggregator, getLogger('Toolbar'))
+@inject(BindingEngine, EventAggregator, Moods, getLogger('Toolbar'))
 export class Toolbar implements Disposable {
     public moods: Mood[];
     public range: DatesRange;
@@ -13,18 +14,11 @@ export class Toolbar implements Disposable {
     private _subscriptions: Map<string, Disposable>;
     private _eventAggregator: EventAggregator;
 
-    constructor(bindingEngine: BindingEngine, eventAggregator: EventAggregator, logger: Logger) {
+    constructor(bindingEngine: BindingEngine, eventAggregator: EventAggregator, moodsService: Moods, logger: Logger) {
         this._logger = logger;
         this._eventAggregator = eventAggregator;
 
-        this.moods = [
-            { name: 'Anger', color: 'rgb(255, 99, 132)' },
-            { name: 'Contempt', color: 'rgb(54, 162, 235)' },
-            { name: 'Disgust', color: 'rgb(255, 205, 86)' },
-            { name: 'Fear', color: 'rgb(201, 203, 207)' },
-            { name: 'Happiness', color: 'rgb(75, 192, 192)' },
-            { name: 'Sadness', color: 'rgb(153, 102, 255)' },
-            { name: 'Surprise', color: 'rgb(255, 159, 64)' }];
+        this.moods = moodsService.moods;
         this.range = new DatesRange(moment().startOf('month'), moment().endOf('day'));
 
         this._subscriptions = new Map([
@@ -46,12 +40,6 @@ export class Toolbar implements Disposable {
             this._subscriptions.forEach(s => s.dispose());
         }
     }
-}
-
-
-export interface Mood {
-    name: string;
-    color: string;
 }
 
 export class DatesRange {

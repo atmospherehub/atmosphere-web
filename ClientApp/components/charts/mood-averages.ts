@@ -2,8 +2,9 @@ import { RestApi } from './../../services/rest-api';
 import { inject } from 'aurelia-framework';
 import { Chart } from 'chart.js';
 import * as _ from 'underscore'
-import { Toolbar, Mood, DatesRange } from './../../services/toolbar';
+import { Toolbar, DatesRange } from './../../services/toolbar';
 import { BaseChartCustomElement } from "./base-chart";
+import { Mood } from "../../services/moods";
 
 @inject(Element, RestApi, Toolbar)
 export class MoodAveragesCustomElement extends BaseChartCustomElement<DayAverages> {

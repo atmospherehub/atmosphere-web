@@ -1,9 +1,10 @@
 import { RestApi } from './../../services/rest-api';
-import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
+import { Toolbar, DatesRange } from './../../services/toolbar';
 import { inject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import { BaseChartCustomElement } from "./base-chart";
+import { Mood } from "../../services/moods";
 
 @inject(Element, RestApi, Toolbar)
 export class PeopleTogetherCustomElement extends BaseChartCustomElement<PeopleStats> {
