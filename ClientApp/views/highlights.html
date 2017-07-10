@@ -1,4 +1,34 @@
 <template>
-    <require from="./dashboard.css"></require>
-    Bla
+    <require from="./highlights.css"></require>
+    <require from="../components/moods-selection/moods-selection"></require>
+    <require from="../components/group-by-selection/group-by-selection"></require>
+
+    <div class="row">
+        <div class="col-md-12">
+            <group-by-selection></group-by-selection>
+            <moods-selection></moods-selection>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">1/1/2017
+                        <spinner show.bind="isLoading"></spinner>
+                    </h4>
+                </div>  
+                <div class="content">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                            <div class="image-wrapper">
+                                <img src="https://" />
+                                <span>65%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
