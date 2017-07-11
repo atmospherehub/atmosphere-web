@@ -1,14 +1,14 @@
 import { Toolbar } from './../../services/toolbar';
 import * as _ from 'underscore'
 import { bindable, inject } from 'aurelia-framework';
-import { Moods, Mood } from "../../services/moods";
+import { MoodsService, Mood } from "../../services/moods";
 
-@inject(Toolbar, Moods)
+@inject(Toolbar, MoodsService)
 export class MoodsSelectionCustomElement {
     private _moodsSelection: MoodWrapper[];
     private _toolbar: Toolbar;
 
-    constructor(toolbar: Toolbar, moodsService: Moods) {
+    constructor(toolbar: Toolbar, moodsService: MoodsService) {
         this._toolbar = toolbar;
         this._moodsSelection = _.map(moodsService.moods, m => {
             return {

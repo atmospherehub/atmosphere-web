@@ -30,6 +30,7 @@ export abstract class BaseChartCustomElement<T> {
                 this._chart.update(0);
             }
             else {
+            
                 this.isLoading = true;
                 this._chart.data = null;
                 this.getData(this._toolbar.range)

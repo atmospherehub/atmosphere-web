@@ -1,4 +1,4 @@
-export class Moods{
+export class MoodsService{
     private _moods: Mood[];
     
     constructor() {        

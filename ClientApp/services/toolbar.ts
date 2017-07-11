@@ -3,9 +3,9 @@ import { BindingEngine, inject } from 'aurelia-framework';
 import { getLogger, Logger } from 'aurelia-logging';
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import * as moment from 'moment';
-import { Moods, Mood } from "./moods";
+import { MoodsService, Mood } from "./moods";
 
-@inject(BindingEngine, EventAggregator, Moods, getLogger('Toolbar'))
+@inject(BindingEngine, EventAggregator, MoodsService, getLogger('Toolbar'))
 export class Toolbar implements Disposable {
     public moods: Mood[];
     public range: DatesRange;
@@ -14,7 +14,7 @@ export class Toolbar implements Disposable {
     private _subscriptions: Map<string, Disposable>;
     private _eventAggregator: EventAggregator;
 
-    constructor(bindingEngine: BindingEngine, eventAggregator: EventAggregator, moodsService: Moods, logger: Logger) {
+    constructor(bindingEngine: BindingEngine, eventAggregator: EventAggregator, moodsService: MoodsService, logger: Logger) {
         this._logger = logger;
         this._eventAggregator = eventAggregator;
 
