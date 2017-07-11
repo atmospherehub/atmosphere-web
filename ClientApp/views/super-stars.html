@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-12">
             <spinner show.bind="isLoading"></spinner>
-            <group-by-selection selected.bind="selectedGroupBy"></group-by-selection>
+            <group-by-selection selected-group.bind="selectedGroupBy"></group-by-selection>
             <moods-selection selected-moods.bind="selectedMoods"></moods-selection>
         </div>
     </div>
@@ -16,14 +16,14 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="header">
-                    <h4 class="title">${group.startDate}</h4>
+                    <h4 class="title">${group.startDate | facesGroupDate:selectedGroupBy}</h4>
                 </div>  
                 <div class="content">
                     <div class="row">
                         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12" repeat.for="face of group.faces">
                             <div class="image-wrapper">
-                                <img src="${face.url}" />
-                                <span>${face.score} ${face.date}</span>
+                                <a href="${face.originalImage}" target="_blank"><img src="${face.url}" alt="" onerror="this.src='/not-found-image.jpg'" /></a>                                
+                                <span>${face.score | percentage} | ${face.date | faceDate:selectedGroupBy}</span>
                             </div>
                         </div>
                     </div>

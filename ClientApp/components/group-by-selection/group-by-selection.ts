@@ -4,7 +4,7 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 
 @autoinject()
 export class GroupBySelectionCustomElement {
-    @bindable selected: string;
+    @bindable selectedGroup: string;
     private _eventAggregator: EventAggregator;
     private _toolBarGroups: GroupWrapper[];
 
@@ -17,17 +17,17 @@ export class GroupBySelectionCustomElement {
     }
 
     attached(): void {
-        _.find(this._toolBarGroups, i => i.name == this.selected).isSelected = true;
+        _.find(this._toolBarGroups, i => i.name == this.selectedGroup).isSelected = true;
     }
 
     public toggleGroup(item: GroupWrapper) {
-        if (item.name === this.selected) {
+        if (item.name === this.selectedGroup) {
             return;
         }
 
         item.isSelected = true;
-        _.find(this._toolBarGroups, i => i.name == this.selected).isSelected = false;
-        this.selected = item.name;
+        _.find(this._toolBarGroups, i => i.name == this.selectedGroup).isSelected = false;
+        this.selectedGroup = item.name;
         this._eventAggregator.publish('groups_selection', item.name);
     }
 }

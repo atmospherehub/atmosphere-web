@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication;
 using System.Threading.Tasks;
 using System.Linq;
+using Dapper;
 
 namespace AtmosphereWeb
 {
@@ -37,6 +38,8 @@ namespace AtmosphereWeb
             services.AddSingleton(provider => Configuration);
             services.AddScoped<DbConnection, SqlConnection>(
                 provider => new SqlConnection(provider.GetRequiredService<IConfigurationRoot>().GetConnectionString("AtmosphereDatabase")));
+
+            SqlMapper.AddTypeHandler(new Models.FacesGroup.FacesGroupFacesHandler(Configuration["ImagesEndpoint"]));
 
             services.AddSingleton(new TokenValidationParameters
             {
