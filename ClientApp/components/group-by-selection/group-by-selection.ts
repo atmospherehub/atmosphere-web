@@ -1,11 +1,8 @@
-import { Toolbar } from './../../services/toolbar';
-import { bindable, inject } from 'aurelia-framework';
+import { bindable, autoinject } from 'aurelia-framework';
 
-@inject(Toolbar)
+@autoinject()
 export class GroupBySelectionCustomElement {
-    private _toolbar: Toolbar;
 
-    constructor(toolbar: Toolbar) {
-        this._toolbar = toolbar;
+    constructor() {
     }
 }

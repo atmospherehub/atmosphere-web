@@ -1,8 +1,8 @@
-import { Aurelia, PLATFORM, inject } from 'aurelia-framework';
+import { Aurelia, PLATFORM, autoinject } from 'aurelia-framework';
 import { Router, RouterConfiguration } from 'aurelia-router';
 import { AuthService } from '../services/auth';
 
-@inject(AuthService)
+@autoinject()
 export class Main {
     public router: Router;
     public showMobileNav: boolean = false;

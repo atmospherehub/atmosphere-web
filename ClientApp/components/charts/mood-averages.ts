@@ -1,16 +1,19 @@
 import { RestApi } from './../../services/rest-api';
-import { inject } from 'aurelia-framework';
+import { autoinject, bindable } from 'aurelia-framework';
 import { Chart } from 'chart.js';
 import * as _ from 'underscore'
-import { Toolbar, DatesRange } from './../../services/toolbar';
 import { BaseChartCustomElement } from "./base-chart";
 import { Mood } from "../../services/moods";
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { DatesRange } from "../date-range/date-range";
 
-@inject(Element, RestApi, Toolbar)
+@autoinject()
 export class MoodAveragesCustomElement extends BaseChartCustomElement<DayAverages> {
+    @bindable selectedMoods: Mood[];
+    @bindable selectedRange: DatesRange;
 
-    constructor(element: Element, api: RestApi, toolbar: Toolbar) {
-        super(element, api, toolbar);
+    constructor(element: Element, api: RestApi, eventAggregator: EventAggregator) {
+        super(element, api, eventAggregator);
     }
 
     getData(range: DatesRange): Promise<DayAverages[]> {

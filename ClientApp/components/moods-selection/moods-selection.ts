@@ -1,18 +1,24 @@
-import { Toolbar } from './../../services/toolbar';
 import * as _ from 'underscore'
-import { bindable, inject } from 'aurelia-framework';
+import { bindable, autoinject } from 'aurelia-framework';
 import { MoodsService, Mood } from "../../services/moods";
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-@inject(Toolbar, MoodsService)
+@autoinject()
 export class MoodsSelectionCustomElement {
-    private _moodsSelection: MoodWrapper[];
-    private _toolbar: Toolbar;
+    @bindable selectedMoods: Mood[]; // moods that currently selected 
+    private _toolBarMoods: MoodWrapper[]; // moods displayed for selection
+    private _moodsService: MoodsService;
+    private _eventAggregator: EventAggregator;
 
-    constructor(toolbar: Toolbar, moodsService: MoodsService) {
-        this._toolbar = toolbar;
-        this._moodsSelection = _.map(moodsService.moods, m => {
+    constructor(moodsService: MoodsService, eventAggregator: EventAggregator) {
+        this._moodsService = moodsService;
+        this._eventAggregator = eventAggregator;
+    }
+
+    attached(): void {
+        this._toolBarMoods = _.map(this._moodsService.moods, m => {
             return {
-                isSelected: !!_.find(this._toolbar.moods, i => i.name === m.name),
+                isSelected: !!_.find(this.selectedMoods, i => i.name === m.name),
                 item: m
             }
         });
@@ -20,12 +26,16 @@ export class MoodsSelectionCustomElement {
 
     public toggleMood(item: MoodWrapper) {
         item.isSelected = !item.isSelected;
-        if (item.isSelected)
-            this._toolbar.moods.push(item.item);
-        else {
-            var toRemove = _.find(this._toolbar.moods, i => i.name === item.item.name);
-            this._toolbar.moods.splice(this._toolbar.moods.indexOf(toRemove), 1);
+        var changedItem: Mood = null;
+        if (item.isSelected) {
+            changedItem = item.item;
+            this.selectedMoods.push(changedItem);
         }
+        else {
+            changedItem = _.find(this.selectedMoods, i => i.name === item.item.name);
+            this.selectedMoods.splice(this.selectedMoods.indexOf(changedItem), 1);
+        }
+        this._eventAggregator.publish('moods_selection', changedItem);
     }
 }
 
