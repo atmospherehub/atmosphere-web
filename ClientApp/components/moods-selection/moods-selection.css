@@ -15,6 +15,9 @@
     color: #fff;
     border-width: 1px
 }
+.moods-single.moods-selection-wrapper button.selected{
+    cursor: default
+}
 .moods-selection-wrapper span{
     position: absolute;
     display: block;

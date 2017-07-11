@@ -18,7 +18,6 @@ export class AuthService {
     constructor(platform: Platform, logger: Logger) {
         this._logger = logger;
         this._platform = platform;
-        this._logger.info('started');
         this._httpClient = new HttpClient();
         this._httpClient.configure(config => {
             config

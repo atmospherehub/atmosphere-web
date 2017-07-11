@@ -6,6 +6,7 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 @autoinject()
 export class MoodsSelectionCustomElement {
     @bindable selectedMoods: Mood[]; // moods that currently selected 
+    @bindable multiSelect: boolean = false;
     private _toolBarMoods: MoodWrapper[]; // moods displayed for selection
     private _moodsService: MoodsService;
     private _eventAggregator: EventAggregator;
@@ -25,17 +26,28 @@ export class MoodsSelectionCustomElement {
     }
 
     public toggleMood(item: MoodWrapper) {
-        item.isSelected = !item.isSelected;
-        var changedItem: Mood = null;
-        if (item.isSelected) {
-            changedItem = item.item;
-            this.selectedMoods.push(changedItem);
+        if (!this.multiSelect && item.item.name === this.selectedMoods[0].name) {
+            return;
+        }
+
+        if (this.multiSelect) {
+            item.isSelected = !item.isSelected;
+            if (item.isSelected) {
+                this.selectedMoods.push(item.item);
+            }
+            else {
+                this.selectedMoods.splice(
+                    this.selectedMoods.indexOf(_.find(this.selectedMoods, i => i.name === item.item.name)),
+                    1);
+            }
         }
         else {
-            changedItem = _.find(this.selectedMoods, i => i.name === item.item.name);
-            this.selectedMoods.splice(this.selectedMoods.indexOf(changedItem), 1);
+            item.isSelected = true;
+            _.find(this._toolBarMoods, i => i.item.name == this.selectedMoods[0].name).isSelected = false;
+            this.selectedMoods.splice(0, 1);
+            this.selectedMoods.push(item.item);
         }
-        this._eventAggregator.publish('moods_selection', changedItem);
+        this._eventAggregator.publish('moods_selection', item.item);
     }
 }
 

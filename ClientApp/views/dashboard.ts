@@ -1,9 +1,9 @@
 import { MoodsService, Mood } from "../services/moods";
-import { inject } from 'aurelia-framework';
+import { autoinject } from 'aurelia-framework';
 import { DatesRange } from "../components/date-range/date-range";
 import * as moment from 'moment';
 
-@inject(MoodsService)
+@autoinject()
 export class Dashboard {
     public selectedMoods: Mood[];
     public selectedRange: DatesRange;
