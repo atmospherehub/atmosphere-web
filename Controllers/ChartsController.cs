@@ -1,3 +1,4 @@
+using AtmosphereWeb.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,12 +40,12 @@ namespace AtmosphereWeb.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> MoodsAverages([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, int minFacesInDay = 10)
+        public async Task<IActionResult> MoodsAverages(DatesRangeModel datesModel, int minFacesInDay = 10)
         {
-            if (!from.HasValue || !to.HasValue) return BadRequest();
-            if (from.Value > to.Value) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
+            if (datesModel.From.Value > datesModel.To.Value) return BadRequest();
 
-            var datePart = datePartFromRange(from.Value, to.Value);
+            var datePart = datePartFromRange(datesModel.From.Value, datesModel.To.Value);
 
             await _connection.OpenAsync();
             return Ok(await _connection.QueryAsync($@"
@@ -66,19 +67,19 @@ namespace AtmosphereWeb.Controllers
                 ORDER BY [StartTime]",
                 new
                 {
-                    start = from.Value.UtcDateTime,
-                    end = to.Value.UtcDateTime,
+                    start = datesModel.From.Value.UtcDateTime,
+                    end = datesModel.To.Value.UtcDateTime,
                     minFacesInDay = minFacesInDay
                 }));
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> DominantMoodsCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, int minFacesInDay = 10)
+        public async Task<IActionResult> DominantMoodsCounts(DatesRangeModel datesModel, int minFacesInDay = 10)
         {
-            if (!from.HasValue || !to.HasValue) return BadRequest();
-            if (from.Value > to.Value) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
+            if (datesModel.From.Value > datesModel.To.Value) return BadRequest();
 
-            var datePart = datePartFromRange(from.Value, to.Value);
+            var datePart = datePartFromRange(datesModel.From.Value, datesModel.To.Value);
 
             await _connection.OpenAsync();
             return Ok(await _connection.QueryAsync($@"
@@ -101,16 +102,16 @@ namespace AtmosphereWeb.Controllers
                 ORDER BY [StartTime]",
                 new
                 {
-                    start = from.Value.UtcDateTime,
-                    end = to.Value.UtcDateTime,
+                    start = datesModel.From.Value.UtcDateTime,
+                    end = datesModel.To.Value.UtcDateTime,
                     minFacesInDay = minFacesInDay
                 }));
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> HourlyMoodsCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, double score = 0.1, int workDayStartHour = 7, int workDayEndHour = 20)
+        public async Task<IActionResult> HourlyMoodsCounts(DatesRangeModel datesModel, double score = 0.1, int workDayStartHour = 7, int workDayEndHour = 20)
         {
-            if (!from.HasValue || !to.HasValue) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
 
             await _connection.OpenAsync();
             return Ok(await _connection.QueryAsync(@"
@@ -134,8 +135,8 @@ namespace AtmosphereWeb.Controllers
                 ORDER BY [Hour]",
                 new
                 {
-                    start = from.Value.UtcDateTime,
-                    end = to.Value.UtcDateTime,
+                    start = datesModel.From.Value.UtcDateTime,
+                    end = datesModel.To.Value.UtcDateTime,
                     score = score,
                     workDayStartHour = workDayStartHour,
                     workDayEndHour = workDayEndHour
@@ -143,9 +144,9 @@ namespace AtmosphereWeb.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> PeopleOnImageCounts([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to)
+        public async Task<IActionResult> PeopleOnImageCounts(DatesRangeModel datesModel)
         {
-            if (!from.HasValue || !to.HasValue) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
 
             await _connection.OpenAsync();
             return Ok(await _connection.QueryAsync(@"
@@ -163,15 +164,15 @@ namespace AtmosphereWeb.Controllers
                 ",
                 new
                 {
-                    start = from.Value.UtcDateTime,
-                    end = to.Value.UtcDateTime
+                    start = datesModel.From.Value.UtcDateTime,
+                    end = datesModel.To.Value.UtcDateTime
                 }));
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> WeekDayNonNeutralPercent([FromQuery]DateTimeOffset? from, [FromQuery]DateTimeOffset? to, int minFacesInDay = 10)
+        public async Task<IActionResult> WeekDayNonNeutralPercent(DatesRangeModel datesModel, int minFacesInDay = 10)
         {
-            if (!from.HasValue || !to.HasValue) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
 
             await _connection.OpenAsync();
             return Ok(await _connection.QueryAsync(@"
@@ -193,8 +194,8 @@ namespace AtmosphereWeb.Controllers
                 ORDER BY [WeekDay]",
                 new
                 {
-                    start = from.Value.UtcDateTime,
-                    end = to.Value.UtcDateTime,
+                    start = datesModel.From.Value.UtcDateTime,
+                    end = datesModel.To.Value.UtcDateTime,
                     minFacesInDay = minFacesInDay
                 }));
         }
@@ -212,7 +213,8 @@ namespace AtmosphereWeb.Controllers
                 return (_groupParts[1], String.Join(", ", _groupParts.Take(2)));
         }
 
-        private string dominantCondition(string mood) {
+        private string dominantCondition(string mood)
+        {
 
             return String.Join(" AND ", _moodsColumns
                 .Where(m => m != mood)

@@ -1,15 +1,19 @@
 import { RestApi } from './../../services/rest-api';
-import { inject, bindable } from 'aurelia-framework';
+import { autoinject, bindable } from 'aurelia-framework';
 import { Chart } from 'chart.js';
 import * as _ from 'underscore'
-import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
 import { BaseChartCustomElement } from "./base-chart";
+import { Mood } from "../../services/moods";
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { DatesRange } from "../date-range/date-range";
 
-@inject(Element, RestApi, Toolbar)
+@autoinject()
 export class MoodDominantsCustomElement extends BaseChartCustomElement<DayDominants> {
+    @bindable selectedMoods: Mood[];
+    @bindable selectedRange: DatesRange;
 
-    constructor(element: Element, api: RestApi, toolbar: Toolbar) {
-        super(element, api, toolbar);
+    constructor(element: Element, api: RestApi,  eventAggregator: EventAggregator) {
+        super(element, api, eventAggregator);
     }
 
     getData(range: DatesRange): Promise<DayDominants[]> {
@@ -55,7 +59,7 @@ export class MoodDominantsCustomElement extends BaseChartCustomElement<DayDomina
     getBindingData(moods: Mood[], data: DayDominants[]): any {
         return {
             labels: _.map(data, g => g.Group),
-            datasets: _.map(this._toolbar.moods, mood => {
+            datasets: _.map(this.selectedMoods, mood => {
                 return {
                     label: mood.name,
                     data: _.map(data, raw => raw[mood.name]),

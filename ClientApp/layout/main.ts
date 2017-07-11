@@ -1,8 +1,8 @@
-import { Aurelia, PLATFORM, inject } from 'aurelia-framework';
+import { Aurelia, PLATFORM, autoinject } from 'aurelia-framework';
 import { Router, RouterConfiguration } from 'aurelia-router';
 import { AuthService } from '../services/auth';
 
-@inject(AuthService)
+@autoinject()
 export class Main {
     public router: Router;
     public showMobileNav: boolean = false;
@@ -17,10 +17,18 @@ export class Main {
         config.map([{
             route: ['', 'dashboard'],
             name: 'dashboard',
-            settings: { icon: 'home' },
+            settings: { icon: 'bar-chart' },
             moduleId: PLATFORM.moduleName('../views/dashboard'),
             nav: true,
             title: 'Dashboard'
+        },
+        {
+            route: 'super-stars',
+            name: 'super-stars',
+            settings: { icon: 'star-o' },
+            moduleId: PLATFORM.moduleName('../views/super-stars'),
+            nav: true,
+            title: 'Super Stars'
         }]);
 
         this.router = router;

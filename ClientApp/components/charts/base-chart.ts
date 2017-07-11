@@ -1,56 +1,65 @@
 import { RestApi } from './../../services/rest-api';
-import { Disposable } from 'aurelia-binding/dist/aurelia-binding';
-import { Subscription } from 'aurelia-event-aggregator';
+import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import { Chart } from 'chart.js';
-import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
+import { Mood } from "../../services/moods";
+import { DatesRange } from "../date-range/date-range";
 
 export abstract class BaseChartCustomElement<T> {
+    abstract selectedMoods: Mood[]; // moods that currently selected 
+    abstract selectedRange: DatesRange;
+
     private _data: T[];
-    protected _toolbar: Toolbar;
     protected _element: Element;
     protected _chart: Chart;
-    protected _toolbarChanges: Subscription;
     protected _api: RestApi;
     public isLoading: boolean;
 
-    constructor(element: Element, api: RestApi, toolbar: Toolbar) {
+    private _eventAggregator: EventAggregator;
+    private _subscriptions: Subscription[];
+
+    constructor(element: Element, api: RestApi, eventAggregator: EventAggregator) {
         this._element = element;
         this._api = api;
-        this._toolbar = toolbar;
+        this._eventAggregator = eventAggregator;
+        this._subscriptions = [];
     }
 
-    attached() {
+    attached(): void {
         this.isLoading = true;
-        this._toolbarChanges = this._toolbar.subscribe((changeName: string) => {
-            if (changeName == 'moods' && this._data != null) {
-                // we don't refresh data when moods change,
-                // because `this._data` has a superset of moods
-                this._chart.data = this.getBindingData(this._toolbar.moods, this._data);
-                this._chart.update(0);
-            }
-            else {
-                this.isLoading = true;
-                this._chart.data = null;
-                this.getData(this._toolbar.range)
-                    .then(data => {
-                        this._data = data;
-                        this._chart.data = this.getBindingData(this._toolbar.moods, this._data);
-                        this._chart.update(0);
-                        this.isLoading = false;
-                    });
-            }
-        });
+        this._subscriptions.push(this._eventAggregator.subscribe('moods_selection', message => this.selectionChanged("moods")));
+        this._subscriptions.push(this._eventAggregator.subscribe('range_selection', message => this.selectionChanged("dates")));
 
-        this.getData(this._toolbar.range)
+        this.getData(this.selectedRange)
             .then(data => {
                 this._data = data;
-                this._chart = this.createChart(this.getBindingData(this._toolbar.moods, this._data));
+                this._chart = this.createChart(this.getBindingData(this.selectedMoods, this._data));
                 this.isLoading = false;
             });
     }
 
-    detached() {
-        this._toolbarChanges.dispose();
+    private selectionChanged(changeName: string): void {
+        if (changeName == 'moods' && this._data != null) {
+            // we don't refresh data when moods change,
+            // because `this._data` has a superset of moods
+            this._chart.data = this.getBindingData(this.selectedMoods, this._data);
+            this._chart.update(0);
+        }
+        else {
+            this.isLoading = true;
+            this.getData(this.selectedRange)
+                .then(data => {
+                    this._data = data;
+                    this._chart.data = this.getBindingData(this.selectedMoods, this._data);
+                    this._chart.update(0);
+                    this.isLoading = false;
+                });
+        }
+    }
+
+    detached(): void {
+        if (this._subscriptions != null) {
+            this._subscriptions.forEach(s => s.dispose());
+        }
         this._data = null;
         if (this._chart != null)
             this._chart.destroy();

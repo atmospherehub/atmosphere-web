@@ -1,9 +1,9 @@
-import { inject, bindable } from 'aurelia-framework';
+import { autoinject, bindable } from 'aurelia-framework';
 import * as $ from 'jquery'
 import { Router } from 'aurelia-router';
 import { AuthService } from '../../services/auth';
 
-@inject(Element, AuthService)
+@autoinject()
 export class MobileCustomElement {
     private _element: any;
     @bindable public showMobileNav: boolean;

@@ -1,15 +1,19 @@
 import { RestApi } from './../../services/rest-api';
-import { Toolbar, DatesRange, Mood } from './../../services/toolbar';
-import { inject, bindable } from 'aurelia-framework';
+import { autoinject, bindable } from 'aurelia-framework';
 import * as _ from 'underscore'
 import { Chart } from 'chart.js';
 import { BaseChartCustomElement } from './base-chart';
+import { Mood } from "../../services/moods";
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { DatesRange } from "../date-range/date-range";
 
-@inject(Element, RestApi, Toolbar)
+@autoinject()
 export class MoodHourlyCustomElement extends BaseChartCustomElement<HourlyMoods> {
+    @bindable selectedMoods: Mood[];
+    @bindable selectedRange: DatesRange;
 
-    constructor(element: Element, api: RestApi, toolbar: Toolbar) {
-        super(element, api, toolbar);
+    constructor(element: Element, api: RestApi, eventAggregator: EventAggregator) {
+        super(element, api, eventAggregator);
     }
 
     getData(range: DatesRange): Promise<HourlyMoods[]> {
@@ -36,7 +40,7 @@ export class MoodHourlyCustomElement extends BaseChartCustomElement<HourlyMoods>
     getBindingData(moods: Mood[], data: HourlyMoods[]): any {
         return {
             labels: _.map(_.union(_.map(data, g => g.Hour), [12, 13, 14, 15, 16, 17, 18, 19, 8, 9, 10, 11]), g => g + ':00'),
-            datasets: _.map(this._toolbar.moods, mood => {
+            datasets: _.map(this.selectedMoods, mood => {
                 return {
                     label: mood.name,
                     data: _.map(data, raw => raw[mood.name]),

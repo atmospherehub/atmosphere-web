@@ -1,7 +1,7 @@
 <template bindable="router">
 
     <ul class="nav">
-        <li repeat.for="row of router.navigation" class="${ row.isActive ? 'link-active' : '' }">
+        <li repeat.for="row of router.navigation" class="${ row.isActive ? 'active' : null }">
             <a href.bind="row.href">
                 <i class="fa fa-${ row.settings.icon }"></i>
                 <p>${ row.title }</p>

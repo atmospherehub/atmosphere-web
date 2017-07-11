@@ -1042,10 +1042,6 @@ input:focus {
   margin: 1px -13px;
   width: 26px; }
 
-.nav > li > a:hover,
-.nav > li > a:focus {
-  background-color: transparent; }
-
 .navbar {
   border: 0;
   font-size: 16px;

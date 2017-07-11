@@ -1,4 +1,4 @@
-.moods-selection-wrapper{
+.group-by-selection-wrapper{
     border: solid 1px #797979;
     border-radius: 4px;
     padding: 7px 9px 3px 30px;
@@ -9,23 +9,23 @@
     text-align: right
 }
 
-.moods-selection-wrapper button{
+.group-by-selection-wrapper button{
     margin-right: 7px;
     margin-bottom: 4px;
-    color: #fff;
+    color: #888;
     border-width: 1px
 }
-.moods-single.moods-selection-wrapper button.selected{
+.group-by-selection-wrapper button.selected,
+.group-by-selection-wrapper button.selected:hover,
+.group-by-selection-wrapper button.selected:active,
+.group-by-selection-wrapper button.selected:focus{
+    color: #fff;
+    background-color: #888;
     cursor: default
 }
-.moods-selection-wrapper span{
+.group-by-selection-wrapper span{
     position: absolute;
     display: block;
     left: 7px;
     top: 9px
-}
-.moods-selection-wrapper button:hover,
-.moods-selection-wrapper button:active,
-.moods-selection-wrapper button:focus{
-    color: #fff;
 }

@@ -10,27 +10,27 @@
 
     <div class="row">
         <div class="col-md-12">
-            <date-range></date-range>
-            <moods-selection></moods-selection>
+            <date-range selected-range.bind="selectedRange"></date-range>
+            <moods-selection selected-moods.bind="selectedMoods" multi-select="true"></moods-selection>
         </div>
     </div>
     <div class="row">
         <div class="col-md-9">
-            <mood-averages></mood-averages>
+            <mood-averages selected-moods.bind="selectedMoods" selected-range.bind="selectedRange"></mood-averages>
         </div>
         <div class="col-md-3">
-            <mood-hourly></mood-hourly>
+            <mood-hourly selected-moods.bind="selectedMoods" selected-range.bind="selectedRange"></mood-hourly>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
-            <mood-dominants></mood-dominants>
+            <mood-dominants selected-moods.bind="selectedMoods" selected-range.bind="selectedRange"></mood-dominants>
         </div>
         <div class="col-md-3">
-            <people-together></people-together>
+            <people-together selected-moods.bind="selectedMoods" selected-range.bind="selectedRange"></people-together>
         </div>
         <div class="col-md-3">
-            <neutral-percent></neutral-percent>
+            <neutral-percent selected-moods.bind="selectedMoods" selected-range.bind="selectedRange"></neutral-percent>
         </div>
     </div>
 </template>

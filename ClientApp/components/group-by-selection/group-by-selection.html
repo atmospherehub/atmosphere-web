@@ -1,0 +1,9 @@
+<template>
+    <require from="./group-by-selection.css"></require>
+    <div class="pull-right group-by-selection-wrapper">
+        <span title="Click to select"><i class="fa fa-check-square-o"></i></span>       
+        <button class="btn btn-default btn-xs ${group.isSelected ? 'selected' : null}" 
+            repeat.for="group of _toolBarGroups" 
+            click.delegate="toggleGroup(group)">${group.name}</button>
+    </div>
+</template>
