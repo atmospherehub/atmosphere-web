@@ -23,12 +23,12 @@ export class Main {
             title: 'Dashboard'
         },
         {
-            route: 'highlights',
-            name: 'highlights',
-            settings: { icon: 'line-chart' },
-            moduleId: PLATFORM.moduleName('../views/highlights'),
+            route: 'super-stars',
+            name: 'super-stars',
+            settings: { icon: 'star-o' },
+            moduleId: PLATFORM.moduleName('../views/super-stars'),
             nav: true,
-            title: 'Highlights'
+            title: 'Super Stars'
         }]);
 
         this.router = router;

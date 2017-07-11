@@ -1,11 +1,11 @@
 <template>
-    <require from="./highlights.css"></require>
+    <require from="./super-stars.css"></require>
     <require from="../components/moods-selection/moods-selection"></require>
     <require from="../components/group-by-selection/group-by-selection"></require>
 
     <div class="row">
         <div class="col-md-12">
-            <group-by-selection></group-by-selection>
+            <group-by-selection selected.bind="selectedGroupBy"></group-by-selection>
             <moods-selection selected-moods.bind="selectedMoods"></moods-selection>
         </div>
     </div>

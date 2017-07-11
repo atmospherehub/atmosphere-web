@@ -1,4 +1,4 @@
-import * as _ from 'underscore'
+import * as _ from 'underscore';
 import { bindable, autoinject } from 'aurelia-framework';
 import { MoodsService, Mood } from "../../services/moods";
 import { EventAggregator } from 'aurelia-event-aggregator';
