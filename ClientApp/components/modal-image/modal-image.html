@@ -1,0 +1,16 @@
+<template>
+    <require from="./modal-image.css"></require>
+    <ux-dialog class="modal-image">
+        <ux-dialog-body>
+            <div>
+                <a href="${_model.downloadImageUrl}" target="_blank" click.trigger="toggleImageSize()" css="cursor: ${_isZoomIn ? 'zoom-out' : 'zoom-in'}">
+                    <img src="${_currentImage}" alt="" onerror="this.src='/not-found-image.jpg'" />
+                </a>
+            </div>
+        </ux-dialog-body>
+        <ux-dialog-footer>
+            <div class="stats"><i class="fa fa-info-circle"></i> ${_model.text}</div>
+            <button click.trigger="_controller.cancel()">Close</button>
+        </ux-dialog-footer>
+    </ux-dialog>
+</template>

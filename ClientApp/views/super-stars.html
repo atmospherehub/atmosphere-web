@@ -22,7 +22,9 @@
                     <div class="row">
                         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12" repeat.for="face of group.faces">
                             <div class="image-wrapper">
-                                <a href="${face.originalImage}" target="_blank"><img src="${face.url}" alt="" onerror="this.src='/not-found-image.jpg'" /></a>                                
+                                <a href="${face.originalImage}" target="_blank" click.delegate="showImage(face)">
+                                    <img src="${face.url}" alt="" onerror="this.src='/not-found-image.jpg'" />
+                                </a>                                
                                 <span>${face.score | percentage} | ${face.date | faceDate:selectedGroupBy}</span>
                             </div>
                         </div>

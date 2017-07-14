@@ -2380,3 +2380,24 @@ input:focus {
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     -webkit-overflow-scrolling: touch; } }
+
+
+ux-dialog-overlay.active {
+  background-color: #000;
+  opacity: .7;
+}
+
+ux-dialog-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+ux-dialog-container > div {
+  margin: auto !important;
+}
+ux-dialog>ux-dialog-footer {
+  padding: 4px 10px
+}
+ux-dialog>ux-dialog-body{
+  padding: 10px
+}
