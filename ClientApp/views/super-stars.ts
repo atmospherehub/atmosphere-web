@@ -1,8 +1,10 @@
+import { DialogService } from 'aurelia-dialog';
 import { MoodsService, Mood } from "../services/moods";
 import { autoinject } from 'aurelia-framework';
 import { RestApi } from './../services/rest-api';
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import * as moment from 'moment';
+import { ModalImage, ImageModel } from '../components/modal-image/modal-image';
 
 @autoinject()
 export class SuperStars {
@@ -12,16 +14,18 @@ export class SuperStars {
     private _eventAggregator: EventAggregator;
     private _subscriptions: Subscription[];
     protected _api: RestApi;
+    private _dialogService: DialogService;
 
     public isLoading: boolean;
     public groups: FacesGroup[];
 
-    constructor(moodsService: MoodsService, api: RestApi, eventAggregator: EventAggregator) {
+    constructor(moodsService: MoodsService, api: RestApi, eventAggregator: EventAggregator, dialogService: DialogService) {
         this.selectedMoods = [moodsService.moods[0]];
         this.selectedGroupBy = 'Day';
         this._api = api;
         this._eventAggregator = eventAggregator;
         this._subscriptions = [];
+        this._dialogService = dialogService;
     }
 
     attached(): void {
@@ -48,6 +52,25 @@ export class SuperStars {
             });
     }
 
+    private showImage(face: Face): void {
+        this._dialogService.open({
+            viewModel: ModalImage,
+            model: {
+                imageUrl: face.url,
+                downloadImageUrl: face.originalImage,
+                text: `${Math.floor(face.score * 100)}% ${this.selectedMoods[0].name.toLowerCase()} at ${moment(face.date).format('MMMM DD HH:mm')}`
+            },
+            lock: false
+        }).whenClosed(response => {
+            if (!response.wasCancelled) {
+                console.log('good - ', response.output);
+            } else {
+                console.log('bad');
+            }
+            console.log(response.output);
+        });
+    }
+
     detached(): void {
         if (this._subscriptions != null) {
             this._subscriptions.forEach(s => s.dispose());
@@ -58,10 +81,10 @@ export class SuperStars {
 export class FaceDateValueConverter {
     toView(value, currentGroup) {
         switch (currentGroup) {
-            case 'Day': return moment(value).format('hh:mm');
-            case 'Week': return moment(value).format('MMM D hh:mm');
-            case 'Month': return moment(value).format('MMM D hh:mm');
-            default: return moment(value).format('MMM DD YY h:mm');
+            case 'Day': return moment(value).format('HH:mm');
+            case 'Week': return moment(value).format('MMM D HH:mm');
+            case 'Month': return moment(value).format('MMM D HH:mm');
+            default: return moment(value).format('MMM DD YY H:mm');
         }
     }
 }
@@ -86,7 +109,7 @@ export class FacesGroupDateValueConverter {
 
 export class PercentageValueConverter {
     toView(value) {
-        return Math.floor(value * 100) + '%';
+        return `${Math.floor(value * 100)}%`;
     }
 }
 
