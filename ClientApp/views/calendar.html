@@ -1,5 +1,14 @@
 <template>
     <require from="./calendar.css"></require>
-
-
+    <require from="../components/spinner/spinner.html"></require>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-calendar">
+                <div class="content">
+                    <spinner show.bind="isLoading"></spinner>
+                    <div id="full-calendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
