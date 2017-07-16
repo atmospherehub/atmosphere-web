@@ -2,9 +2,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,7 +37,7 @@ namespace AtmosphereWeb.Controllers
             }
 
             await _connection.OpenAsync();
-            var result = (await _connection.QueryAsync<FacesGroup>($@"
+            return Ok(await _connection.QueryAsync<FacesGroup>($@"
                 SELECT 
 	                MIN(f.[Time]) AS [StartDate],
 	                (SELECT TOP {facesInGroup}
@@ -58,8 +56,7 @@ namespace AtmosphereWeb.Controllers
                 new
                 {
                     start = getStartDate(model.GroupBy.Value)
-                })).ToList();
-            return Ok(result);
+                }));
         }
     }
 }

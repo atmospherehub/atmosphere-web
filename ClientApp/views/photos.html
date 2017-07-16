@@ -8,12 +8,12 @@
             <div class="card">
                 <div class="content">
                     <div class="row">
-                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12" repeat.for="face of _date">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12" repeat.for="face of _data">
                             <div class="image-wrapper">
                                 <a href="${face.originalImage}" target="_blank" click.delegate="showImage(face)">
-                                    <img src="${face.url}" alt="" onerror="this.src='/not-found-image.jpg'" />
+                                    <img src="${face.url}" alt="" />
                                 </a>
-                                <span>${face.score | percentage} | ${face.date | faceDate:selectedGroupBy}</span>
+                                <span> | ${face.date }</span>
                             </div>
                         </div>
                     </div>

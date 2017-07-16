@@ -10,7 +10,7 @@ export class Photos {
     private _dialogService: DialogService;
     private _isLoading: boolean;
     private _currentDate: moment.Moment;
-    private _date: Face[];
+    private _data: Face[];
 
     constructor(api: RestApi, dialogService: DialogService) {
         this._currentDate = moment();
@@ -39,7 +39,7 @@ export class Photos {
 
         this._api.get<Face[]>(`calendar/day/${this._currentDate.toISOString()}`)
             .then(data => {
-                this._date = data;
+                this._data = data;
                 this._isLoading = false;
             });
     }
@@ -60,13 +60,13 @@ export class Photos {
 interface Face {
     url: string;
     originalImage: string;
-    Anger: number;
-    Contempt: number;
-    Disgust: number;
-    Fear: number;
-    Happiness: number;
-    Neutral: number;
-    Sadness: number;
-    Surprise: number;
+    anger: number;
+    contempt: number;
+    disgust: number;
+    fear: number;
+    happiness: number;
+    neutral: number;
+    sadness: number;
+    surprise: number;
     date: Date;
 }
