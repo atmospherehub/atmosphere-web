@@ -11,7 +11,7 @@ export class GroupBySelectionCustomElement {
     constructor(eventAggregator: EventAggregator) {
         this._eventAggregator = eventAggregator;
         this._toolBarGroups = [
-            { name: 'Day', isSelected: false },
+            { name: 'DayOfYear', isSelected: false },
             { name: 'Week', isSelected: false },
             { name: 'Month', isSelected: false }];
     }

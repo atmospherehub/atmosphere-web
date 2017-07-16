@@ -21,7 +21,7 @@ export class SuperStars {
 
     constructor(moodsService: MoodsService, api: RestApi, eventAggregator: EventAggregator, dialogService: DialogService) {
         this.selectedMoods = [moodsService.moods[0]];
-        this.selectedGroupBy = 'Day';
+        this.selectedGroupBy = 'DayOfYear';
         this._api = api;
         this._eventAggregator = eventAggregator;
         this._subscriptions = [];

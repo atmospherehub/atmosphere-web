@@ -31,7 +31,7 @@ namespace AtmosphereWeb.Controllers
             {
                 switch (value)
                 {
-                    case DateParts.Day: return DateTimeOffset.UtcNow.AddDays(-amountOfGroups);
+                    case DateParts.DayOfYear: return DateTimeOffset.UtcNow.AddDays(-amountOfGroups);
                     case DateParts.Week: return DateTimeOffset.UtcNow.AddDays(-amountOfGroups * 7);
                     case DateParts.Month: return DateTimeOffset.UtcNow.AddMonths(-amountOfGroups);
                     default: throw new ArgumentOutOfRangeException();

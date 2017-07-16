@@ -1,15 +1,19 @@
 import { autoinject } from 'aurelia-framework';
+import { RestApi } from './../services/rest-api';
 import * as moment from 'moment';
 import 'fullcalendar';
 import * as $ from 'jquery'
+import * as _ from 'underscore'
 
 @autoinject()
 export class Dashboard {
     private _element: Element;
-    public isLoading: boolean;
+    private _api: RestApi;
+    private _isLoading: boolean;
 
-    constructor(element: Element) {
+    constructor(element: Element, api: RestApi) {
         this._element = element;
+        this._api = api;
     }
 
     private attached(): void {
@@ -27,28 +31,48 @@ export class Dashboard {
                 alert('Clicked on: ' + date.format());
 
             },
-            events: function (start, end, timezone, callback) {
-                callback([{
-                    title: 'First person',
-                    start: new Date(2017, 6, 5, 8, 23),
-                    className: 'event-blue',
-                    allDay: false,
-                    url: 'http://localhost:60191/#/calendar/first-person'
-                },{
-                    title: 'Last person',
-                    start: new Date(2017, 6, 5, 23, 23),
-                    className: 'event-green',
-                    allDay: false,
-                    url: 'http://localhost:60191/#/calendar/last-person'
-                },{
-                    title: 'Σ 223 😊 23% 😢 22%',
-                    start: new Date(2017, 6, 5),
-                    className: 'event-azure',
-                    allDay: true,
-                    borderColor: '#ff0000'
-                }]);
+            events: (start, end, timezone, callback) => {
+                this._isLoading = true;
+                this._api
+                    .get<Day[]>(`/calendar/days?from=${start.toISOString()}&to=${end.toISOString()}`)
+                    .then((days) => {
+                        callback(_
+                            .chain(days)
+                            .map((day) => {
+                                if (day.TotalPersons < 1) return [];
+                                return [{
+                                    title: 'First person',
+                                    start: day.FirstPerson,
+                                    className: 'event-blue',
+                                    allDay: false,
+                                    url: `/#/calendar/${day.FirstPerson}/first-person`
+                                }, {
+                                    title: 'Last person',
+                                    start: day.LastPerson,
+                                    className: 'event-green',
+                                    allDay: false,
+                                    url: `/#/calendar/${day.FirstPerson}/last-person`
+                                }, {
+                                    title: `Σ ${day.TotalPersons} | 😊 ${Math.floor(day.AvgHappiness * 100)}% | 😢 ${Math.floor(day.AvgSadness * 100)}%`,
+                                    start: day.FirstPerson,
+                                    className: 'event-azure',
+                                    allDay: true
+                                }];
+                            })
+                            .flatten(true)
+                            .value());
+                        this._isLoading = false;
+                    });
             }
         });
     }
+}
+
+interface Day {
+    FirstPerson: Date;
+    LastPerson: Date;
+    TotalPersons: number;
+    AvgHappiness: number;
+    AvgSadness: number;
 }
 

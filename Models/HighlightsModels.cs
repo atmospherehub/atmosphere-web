@@ -108,7 +108,7 @@ namespace AtmosphereWeb.Models
 
     public enum DateParts
     {
-        Day,
+        DayOfYear,
         Week,
         Month
     }
