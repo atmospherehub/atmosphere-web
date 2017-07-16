@@ -1127,3 +1127,9 @@ spinner{
     top: 30px;
     left: 30px
 }
+.event-stats{
+    text-align: center;
+}
+.event-stats .fc-time{
+    display: none
+}

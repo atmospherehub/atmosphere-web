@@ -31,12 +31,17 @@ export class Main {
             title: 'Super Stars'
         },
         {
-            route: ['calendar', 'calendar/:date'],
+            route: ['calendar', 'calendar/:currentDate'],
             name: 'calendar',
             settings: { icon: 'calendar' },
             moduleId: PLATFORM.moduleName('../views/calendar'),
             nav: true,
             title: 'Calendar'
+        },
+        {
+            route: ['calendar/:date/day'],
+            name: 'calendar-day',
+            moduleId: PLATFORM.moduleName('../views/photos')
         }]);
 
         this.router = router;

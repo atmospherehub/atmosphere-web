@@ -1,0 +1,24 @@
+<template>
+    <require from="../components/spinner/spinner.html"></require>
+    <require from="./photos.css"></require>
+
+    <spinner show.bind="_isLoading"></spinner>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12" repeat.for="face of _date">
+                            <div class="image-wrapper">
+                                <a href="${face.originalImage}" target="_blank" click.delegate="showImage(face)">
+                                    <img src="${face.url}" alt="" onerror="this.src='/not-found-image.jpg'" />
+                                </a>
+                                <span>${face.score | percentage} | ${face.date | faceDate:selectedGroupBy}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
