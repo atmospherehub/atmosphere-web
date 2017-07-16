@@ -16,14 +16,18 @@ export class Dashboard {
         this._api = api;
     }
 
+    private activate(date: string): void {
+        
+    }
+
     private attached(): void {
-        let picker = $('#full-calendar', this._element).fullCalendar({
+        $('#full-calendar', this._element).fullCalendar({
             header: {
                 left: '',
                 center: 'title',
                 right: 'prev,next today'
             },
-            timeFormat: 'HH(:mm)',
+            timeFormat: 'HH:mm',
             defaultDate: new Date(),
             defaultView: 'month',
             dayClick: function (date, jsEvent, view) {
@@ -65,6 +69,10 @@ export class Dashboard {
                     });
             }
         });
+    }
+
+    private detached():void{
+        $('#full-calendar', this._element).fullCalendar('destroy');
     }
 }
 

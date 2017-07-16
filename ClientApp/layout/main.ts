@@ -31,7 +31,7 @@ export class Main {
             title: 'Super Stars'
         },
         {
-            route: 'calendar',
+            route: ['calendar', 'calendar/:date'],
             name: 'calendar',
             settings: { icon: 'calendar' },
             moduleId: PLATFORM.moduleName('../views/calendar'),
