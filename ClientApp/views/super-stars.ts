@@ -13,7 +13,7 @@ export class SuperStars {
 
     private _eventAggregator: EventAggregator;
     private _subscriptions: Subscription[];
-    protected _api: RestApi;
+    private _api: RestApi;
     private _dialogService: DialogService;
 
     public isLoading: boolean;
@@ -21,7 +21,7 @@ export class SuperStars {
 
     constructor(moodsService: MoodsService, api: RestApi, eventAggregator: EventAggregator, dialogService: DialogService) {
         this.selectedMoods = [moodsService.moods[0]];
-        this.selectedGroupBy = 'Day';
+        this.selectedGroupBy = 'DayOfYear';
         this._api = api;
         this._eventAggregator = eventAggregator;
         this._subscriptions = [];
@@ -61,13 +61,6 @@ export class SuperStars {
                 text: `${Math.floor(face.score * 100)}% ${this.selectedMoods[0].name.toLowerCase()} at ${moment(face.date).format('MMMM DD HH:mm')}`
             },
             lock: false
-        }).whenClosed(response => {
-            if (!response.wasCancelled) {
-                console.log('good - ', response.output);
-            } else {
-                console.log('bad');
-            }
-            console.log(response.output);
         });
     }
 

@@ -18,7 +18,7 @@ namespace AtmosphereWeb.Controllers
         private static readonly List<string> _groupParts = new List<string> {
             "DATEPART(YEAR, [Time] AT TIME ZONE 'Israel Standard Time')",
             "DATEPART(MONTH, [Time] AT TIME ZONE 'Israel Standard Time')",
-            "DATEPART(DAY, [Time] AT TIME ZONE 'Israel Standard Time')",
+            "DATEPART(DAYOFYEAR, [Time] AT TIME ZONE 'Israel Standard Time')",
             "DATEPART(HOUR, [Time] AT TIME ZONE 'Israel Standard Time')",
             "DATEPART(MINUTE, [Time] AT TIME ZONE 'Israel Standard Time')",
             "DATEPART(SECOND, [Time] AT TIME ZONE 'Israel Standard Time')"

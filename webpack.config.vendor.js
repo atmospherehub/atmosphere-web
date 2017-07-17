@@ -40,7 +40,9 @@ module.exports = ({ prod } = {}) => {
                 'underscore',
                 'moment',
                 'bootstrap-daterangepicker',
-                'cerialize'
+                'cerialize',
+                'fullcalendar',
+                'fullcalendar/dist/fullcalendar.css'
             ],
         },
         output: {

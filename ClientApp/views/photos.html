@@ -1,0 +1,42 @@
+<template>
+    <require from="../components/spinner/spinner.html"></require>
+    <require from="./photos.css"></require>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="header">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="${_currentDate | calendarUrl:_router}" class="btn btn-default"><i class="fa fa-angle-double-left"></i>Month</a>
+                        </div>
+                        <div class="col-md-6">
+                            <h2>${_data.length | photosTitle:_currentDate:_isLoading}</h2>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="btn-group pull-right">
+                                <a href="${_currentDate | photosUrl:_router:-1}" class="btn btn-default"><i class="fa fa-chevron-left"></i></a>
+                                <a href="${_currentDate | photosUrl:_router:1}" class="btn btn-default"><i class="fa fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12" repeat.for="face of _data">
+                            <div class="image-wrapper">
+                                <a href="${face.originalImage}" target="_blank" click.delegate="showImage(face)">
+                                    <img src="${face.url}" alt="" />
+                                </a>
+                                <div>
+                                    <span>${face.date | photoTime }</span>
+                                    <span repeat.for="mood of face.moods | filterScores" title="${mood.name}" class="mood mood-${mood.name.toLowerCase()}">${mood.score | photoScore}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

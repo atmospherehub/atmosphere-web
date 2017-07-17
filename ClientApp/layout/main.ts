@@ -29,6 +29,19 @@ export class Main {
             moduleId: PLATFORM.moduleName('../views/super-stars'),
             nav: true,
             title: 'Super Stars'
+        },
+        {
+            route: ['calendar', 'calendar/:currentDate'],
+            name: 'calendar',
+            settings: { icon: 'calendar' },
+            moduleId: PLATFORM.moduleName('../views/calendar'),
+            nav: true,
+            title: 'Calendar'
+        },
+        {
+            route: ['calendar/:date/day'],
+            name: 'calendar-day',
+            moduleId: PLATFORM.moduleName('../views/photos')
         }]);
 
         this.router = router;
