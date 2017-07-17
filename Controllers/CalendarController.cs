@@ -80,14 +80,16 @@ namespace AtmosphereWeb.Controllers
                     Url = $"{_config["ImagesEndpoint"]}/zoomin/{f.Id.ToString("D")}.jpg",
                     OriginalImage = $"{_config["ImagesEndpoint"]}/faces/{f.Image}",
                     f.Date,
-                    f.Anger,
-                    f.Contempt,
-                    f.Disgust,
-                    f.Fear,
-                    f.Happiness,
-                    f.Neutral,
-                    f.Sadness,
-                    f.Surprise
+                    Moods = new dynamic[] {
+                        new { Name = "Anger", Score = f.Anger },
+                        new { Name = "Contempt", Score = f.Contempt },
+                        new { Name = "Disgust", Score = f.Disgust },
+                        new { Name = "Fear", Score = f.Fear },
+                        new { Name = "Happiness", Score = f.Happiness },
+                        new { Name = "Neutral", Score = f.Neutral },
+                        new { Name = "Sadness", Score = f.Sadness },
+                        new { Name = "Surprise", Score = f.Surprise }
+                    }
                 }));
         }
     }

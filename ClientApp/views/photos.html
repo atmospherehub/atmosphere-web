@@ -7,16 +7,17 @@
             <div class="card">
                 <div class="header">
                     <div class="row">
-                        <div class="col-md-4">
-                            <a href="${/}" class="btn btn-default pull-left"><i class="fa fa-angle-double-left"></i>Back</a>
+                        <div class="col-md-3">
+                            <a href="${_currentDate | calendarUrl:_router}" class="btn btn-default"><i class="fa fa-angle-double-left"></i>Month</a>
                         </div>
-                        <div class="col-md-4">                            
-                            <h2 class="title" show.bind="_isLoading">Loading images...</h2>
-                            <h2 class="title" show.bind="!_isLoading">${_data.length | imageCount:_currentDate}</h2>
+                        <div class="col-md-6">
+                            <h2>${_data.length | photosTitle:_currentDate:_isLoading}</h2>
                         </div>
-                        <div class="col-md-4">
-                            <button type="button" class="btn btn-default pull-right"><i class="fa fa-chevron-right"></i></button>
-                            <button type="button" class="btn btn-default pull-right"><i class="fa fa-chevron-left"></i></button>
+                        <div class="col-md-3">
+                            <div class="btn-group pull-right">
+                                <a href="${_currentDate | photosUrl:_router:-1}" class="btn btn-default"><i class="fa fa-chevron-left"></i></a>
+                                <a href="${_currentDate | photosUrl:_router:1}" class="btn btn-default"><i class="fa fa-chevron-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -27,7 +28,10 @@
                                 <a href="${face.originalImage}" target="_blank" click.delegate="showImage(face)">
                                     <img src="${face.url}" alt="" />
                                 </a>
-                                <span> | ${face.date }</span>
+                                <div>
+                                    <span>${face.date | photoTime }</span>
+                                    <span repeat.for="mood of face.moods | filterScores" title="${mood.name}" class="mood mood-${mood.name.toLowerCase()}">${mood.score | photoScore}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

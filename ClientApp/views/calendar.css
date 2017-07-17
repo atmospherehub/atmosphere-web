@@ -1119,7 +1119,7 @@ be a descendant of the grid when it is being dragged.
 }
 
 /* beyoud calendar additions*/
-spinner{
+.card-calendar spinner{
     position: absolute;
     top: 30px;
     left: 30px
@@ -1129,4 +1129,7 @@ spinner{
 }
 .event-stats .fc-time{
     display: none
+}
+.fc-day{
+  cursor: pointer
 }
