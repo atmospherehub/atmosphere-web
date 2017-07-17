@@ -19,24 +19,17 @@ export class Photos {
     }
 
     activate(routeParams, routeConfig) {
-        if (!routeParams.date) {
-            // no params in route => fall to defaults
-            return;
-        }
-
         let currentDate = moment(routeParams.date);
-        if (!currentDate.isValid) {
-            // don't deal with non valid input from route
-            return;
+        if (currentDate.isValid) {
+            this._currentDate = currentDate;
         }
-
-        this._currentDate = currentDate;
+        else{
+            this._currentDate = moment();
+        }
+        
         routeConfig.navModel.title = `Photos of ${currentDate.format('MMM D YYYY')}`;
-    }
-
-    attached(): void {
+        
         this._isLoading = true;
-
         this._api.get<Face[]>(`calendar/day/${this._currentDate.toISOString()}`)
             .then(data => {
                 this._data = data;
@@ -54,6 +47,17 @@ export class Photos {
             },
             lock: false
         });
+    }
+}
+
+export class ImageCountValueConverter {
+    toView(value, date) {
+        if(value == 0)
+            return `No image on ${date.format('MMMM D')}`;
+        else if (value == 1)
+            return `1 image on ${date.format('MMMM D')}`;
+        else 
+            return `${value} images on ${date.format('MMMM D')}`;
     }
 }
 
