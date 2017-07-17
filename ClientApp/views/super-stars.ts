@@ -33,7 +33,7 @@ export class SuperStars {
         this._subscriptions.push(this._eventAggregator.subscribe('moods_selection', (m) => this.selectionChanged('moods', m)));
         this._subscriptions.push(this._eventAggregator.subscribe('groups_selection', (m) => this.selectionChanged('groups', m)));
 
-        this._api.get<FacesGroup[]>(`highlights/faces?mood=${this.selectedMoods[0].name}&groupBy=${this.selectedGroupBy}`)
+        this._api.get<FacesGroup[]>(`/highlights/faces?mood=${this.selectedMoods[0].name}&groupBy=${this.selectedGroupBy}`)
             .then(data => {
                 this.groups = data;
                 this.isLoading = false;
@@ -45,7 +45,7 @@ export class SuperStars {
 
         if (changeName == 'groups') this.selectedGroupBy = changedObject;
 
-        this._api.get<FacesGroup[]>(`highlights/faces?mood=${this.selectedMoods[0].name}&groupBy=${this.selectedGroupBy}`)
+        this._api.get<FacesGroup[]>(`/highlights/faces?mood=${this.selectedMoods[0].name}&groupBy=${this.selectedGroupBy}`)
             .then(data => {
                 this.groups = data;
                 this.isLoading = false;

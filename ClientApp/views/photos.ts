@@ -35,7 +35,7 @@ export class Photos {
 
         this._isLoading = true;
         this._data = [];
-        this._api.get<Face[]>(`calendar/day/${this._currentDate.toISOString()}`)
+        this._api.get<Face[]>(`/calendar/day/${this._currentDate.toISOString()}`)
             .then(data => {
                 this._data = data;
                 this._isLoading = false;

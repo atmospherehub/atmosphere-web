@@ -101,7 +101,7 @@ export class Dashboard {
                             end: day.LastPerson,
                             className: 'event-azure event-stats',
                             allDay: false,
-                            url: `/#/calendar/${moment(day.FirstPerson).format("YYYY-MM-DD")}/day`
+                            url: this._router.generate(`calendar-day`, { date: moment(day.FirstPerson).format("YYYY-MM-DD") })
                         }];
                     })
                     .flatten(true)

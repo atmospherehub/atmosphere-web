@@ -14,6 +14,9 @@ export class Main {
 
     configureRouter(config: RouterConfiguration, router: Router) {
         config.title = 'Atmosphere';
+        config.options.pushState = true;
+        config.options.root = '/';
+        config.options.hashChange = false;
         config.map([{
             route: ['', 'dashboard'],
             name: 'dashboard',

@@ -17,7 +17,7 @@ export class RestApi {
         this._fetchClient.configure(config => {
             config
                 .useStandardConfiguration()
-                .withBaseUrl('api/')
+                .withBaseUrl('/api')
                 .withDefaults({
                     headers: {
                         'Accept': 'application/json',
