@@ -193,7 +193,6 @@ NOTE: use percentage font sizes or else old IE chokes
 }
 
 .fc-state-default.fc-corner-right {
-  /* non-theme */
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
 }
@@ -1122,7 +1121,8 @@ be a descendant of the grid when it is being dragged.
 .card-calendar spinner{
     position: absolute;
     top: 30px;
-    left: 30px
+    left: 30px;
+    bottom: auto
 }
 .event-stats{
     text-align: center;
