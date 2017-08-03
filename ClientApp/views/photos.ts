@@ -50,13 +50,18 @@ export class Photos {
             .map(m => `${m.name}: ${Math.floor(m.score * 100)}%`)
             .value()
             .join(' | ');
+        var infoText: string;
+        if (face.firstName)
+            infoText = `${face.firstName} at ${moment(face.date).format('HH:mm')} | ${moodsFormated}`;
+        else
+            infoText = `Time: ${moment(face.date).format('HH:mm')} | ${moodsFormated}`;
 
         this._dialogService.open({
             viewModel: ModalImage,
             model: {
                 imageUrl: face.url,
                 downloadImageUrl: face.originalImage,
-                text: `Time: ${moment(face.date).format('HH:mm')} | ${moodsFormated}`
+                text: infoText
             },
             lock: false
         });
@@ -88,9 +93,13 @@ export class PhotosUrlValueConverter {
     }
 }
 
-export class PhotoTimeValueConverter {
-    toView(value: Date) {
-        return moment(value).format("HH:mm");
+export class PhotoInfoValueConverter {
+    toView(face: Face) {
+        let timestamp = moment(face.date).format("HH:mm");
+        if (face.firstName)
+            return `${face.firstName} at ${timestamp}`;
+        else
+            return timestamp;
     }
 }
 
@@ -101,13 +110,13 @@ export class PhotoScoreValueConverter {
 }
 
 export class FilterScoresValueConverter {
-  toView(array: FaceMood[]) {
-    return _.chain(array)
-        .filter(m => m.score > 0.02)
-        .sortBy(m => m.score)
-        .first(4)
-        .value();
-  }
+    toView(array: FaceMood[]) {
+        return _.chain(array)
+            .filter(m => m.score > 0.02)
+            .sortBy(m => m.score)
+            .first(4)
+            .value();
+    }
 }
 
 interface Face {
@@ -115,6 +124,7 @@ interface Face {
     originalImage: string;
     date: Date;
     moods: FaceMood[];
+    firstName: string;
 }
 
 interface FaceMood {

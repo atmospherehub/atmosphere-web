@@ -55,20 +55,22 @@ namespace AtmosphereWeb.Controllers
 
             await _connection.OpenAsync();
             var result = await _connection.QueryAsync($@"
-                SELECT [Id]
-                      ,[Time] AS [Date]
-                      ,[Image] 
-                      ,[CognitiveAnger] AS [Anger]
-                      ,[CognitiveContempt] AS [Contempt]
-                      ,[CognitiveDisgust] AS [Disgust]
-                      ,[CognitiveFear] AS [Fear]
-                      ,[CognitiveHappiness] AS [Happiness]
-                      ,[CognitiveNeutral] AS [Neutral]
-                      ,[CognitiveSadness] AS [Sadness]
-                      ,[CognitiveSurprise] AS [Surprise]
-                FROM [dbo].[Faces]
-                WHERE CAST([Time] AT TIME ZONE 'Israel Standard Time' AS DATE) =  CAST(@date AT TIME ZONE 'Israel Standard Time' AS DATE)
-                ORDER BY [Time]",
+                SELECT f.[Id]
+                      ,f.[Time] AS [Date]
+                      ,f.[Image] 
+                      ,f.[CognitiveAnger] AS [Anger]
+                      ,f.[CognitiveContempt] AS [Contempt]
+                      ,f.[CognitiveDisgust] AS [Disgust]
+                      ,f.[CognitiveFear] AS [Fear]
+                      ,f.[CognitiveHappiness] AS [Happiness]
+                      ,f.[CognitiveNeutral] AS [Neutral]
+                      ,f.[CognitiveSadness] AS [Sadness]
+                      ,f.[CognitiveSurprise] AS [Surprise]
+                      ,m.[FirstName]
+                FROM [dbo].[Faces] AS f
+                LEFT JOIN [dbo].[UsersMap] AS m ON m.[UserId] = f.[UserId]
+                WHERE CAST(f.[Time] AT TIME ZONE 'Israel Standard Time' AS DATE) =  CAST(@date AT TIME ZONE 'Israel Standard Time' AS DATE)
+                ORDER BY f.[Time]",
                 new
                 {
                     date
@@ -89,7 +91,8 @@ namespace AtmosphereWeb.Controllers
                         new { Name = "Neutral", Score = f.Neutral },
                         new { Name = "Sadness", Score = f.Sadness },
                         new { Name = "Surprise", Score = f.Surprise }
-                    }
+                    },
+                    f.FirstName
                 }));
         }
     }

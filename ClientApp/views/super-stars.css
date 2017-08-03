@@ -1,11 +1,11 @@
-.image-wrapper{
+.super-stars .image-wrapper{
     text-align: center;
     border: 1px solid #e5e5e5;
     border-radius: 6px;
     margin-bottom: 10px
 }
 
-    .image-wrapper img {
+    .super-stars .image-wrapper img {
         width: 100%;
         display: inline-block;
         position: relative;
@@ -13,11 +13,11 @@
 
     }
 
-    .image-wrapper span {
+    .super-stars .image-wrapper span {
         display: inline-block;
         text-align: center;
         padding: 6px 0 3px
     }
-group-by-selection div{
+.super-stars group-by-selection div{
     margin-left: 10px
 }
