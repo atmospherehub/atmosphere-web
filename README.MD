@@ -14,7 +14,8 @@
   },
   "Authorization": {
     "SymmetricKey": ""
-  }
+  },
+  "ImagesEndpoint": ""
 }
 ```
 
