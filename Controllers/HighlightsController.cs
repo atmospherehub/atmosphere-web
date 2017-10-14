@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Data.Common;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AtmosphereWeb.Controllers

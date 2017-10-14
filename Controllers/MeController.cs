@@ -1,5 +1,4 @@
-﻿using AtmosphereWeb.Models;
-using Dapper;
+﻿using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,50 +11,30 @@ namespace AtmosphereWeb.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(ActiveAuthenticationSchemes = "Bearer")]
-    public class CalendarController : Controller
+    public class MeController : Controller
     {
         private readonly DbConnection _connection;
         private readonly IConfigurationRoot _config;
 
-        public CalendarController(DbConnection connection, IConfigurationRoot config)
+        public MeController(DbConnection connection, IConfigurationRoot config)
         {
             this._connection = connection ?? throw new ArgumentNullException(nameof(connection));
             this._config = config ?? throw new ArgumentNullException(nameof(config));
-        }
+    }
 
-        [HttpGet("days")]
-        public async Task<IActionResult> GetDays(DatesRangeModel datesModel)
+        [HttpGet("photos")]
+        public async Task<IActionResult> MyPhotos()
         {
-            if (!ModelState.IsValid) return BadRequest();
-            if (datesModel.To.Value - datesModel.From.Value < TimeSpan.FromDays(1)) return BadRequest();
+            var email = this.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            if (String.IsNullOrEmpty(email)) return BadRequest(new { message = "No email in identity" });
 
             await _connection.OpenAsync();
+            var userId = await _connection.ExecuteScalarAsync<string>("SELECT UserId FROM UsersMap WHERE email = @email", new { email });
 
-            return Ok(await _connection.QueryAsync($@"
-                SELECT
-	                MIN([Time]) AT TIME ZONE 'Israel Standard Time' AS [FirstPerson]
-	                ,MAX([Time]) AT TIME ZONE 'Israel Standard Time' AS [LastPerson]
-	                ,COUNT(*) AS [TotalPersons]
-	                ,AVG([CognitiveHappiness]) AS [AvgHappiness]
-	                ,AVG([CognitiveSadness]) AS [AvgSadness]
-                FROM [Faces]
-                WHERE [Time] >= @start AND [Time] <= @end
-                GROUP BY DATEPART(DAYOFYEAR, [Time] AT TIME ZONE 'Israel Standard Time')",
-                new
-                {
-                    start = datesModel.From.Value.UtcDateTime,
-                    end = datesModel.To.Value.UtcDateTime
-                }));
-        }
+            if(String.IsNullOrEmpty(userId)) return BadRequest(new { message = "User has no mappings" });
 
-        [HttpGet("day/{date}")]
-        public async Task<IActionResult> GetDays(DateTimeOffset date)
-        {
-            if (!ModelState.IsValid) return BadRequest();
-
-            await _connection.OpenAsync();
             var result = await _connection.QueryAsync(@"
-                SELECT f.[Id]
+                SELECT TOP 100 f.[Id]
                       ,f.[Time] AS [Date]
                       ,f.[Image] 
                       ,f.[CognitiveAnger] AS [Anger]
@@ -66,14 +45,12 @@ namespace AtmosphereWeb.Controllers
                       ,f.[CognitiveNeutral] AS [Neutral]
                       ,f.[CognitiveSadness] AS [Sadness]
                       ,f.[CognitiveSurprise] AS [Surprise]
-                      ,m.[FirstName]
                 FROM [dbo].[Faces] AS f
-                LEFT JOIN [dbo].[UsersMap] AS m ON m.[UserId] = f.[UserId]
-                WHERE CAST(f.[Time] AT TIME ZONE 'Israel Standard Time' AS DATE) =  CAST(@date AT TIME ZONE 'Israel Standard Time' AS DATE)
-                ORDER BY f.[Time]",
+                WHERE UserId = @userId
+                ORDER BY f.[Time] DESC",
                 new
                 {
-                    date
+                    userId
                 });
 
             return Ok(result
@@ -91,8 +68,7 @@ namespace AtmosphereWeb.Controllers
                         new { Name = "Neutral", Score = f.Neutral },
                         new { Name = "Sadness", Score = f.Sadness },
                         new { Name = "Surprise", Score = f.Surprise }
-                    },
-                    f.FirstName
+                    }
                 }));
         }
     }
