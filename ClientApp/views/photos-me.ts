@@ -4,7 +4,8 @@ import { RestApi } from './../services/rest-api';
 import { DialogService } from 'aurelia-dialog';
 import { ModalImage, ImageModel } from '../components/modal-image/modal-image';
 import { Router } from 'aurelia-router';
-import * as _ from 'underscore'
+import * as _ from 'underscore';
+import * as $ from 'jquery'
 
 @autoinject()
 export class PhotosMe {
@@ -19,9 +20,8 @@ export class PhotosMe {
         this._dialogService = dialogService;
     }
 
-    activate(routeParams, routeConfig) {      
+    activate(routeParams, routeConfig) {
         this._isLoading = true;
-        this._data = [];
         this._api.get<Face[]>(`/me/photos`)
             .then(data => {
                 this._data = data;
@@ -52,6 +52,33 @@ export class PhotosMe {
             },
             lock: false
         });
+    }
+
+    private attached(): void {
+        $('.main-panel')
+            .scrollTop(0)
+            .bind('scroll', (e) => {
+                var _element = $(e.target);
+                // $().scrollTop()          - how much has been scrolled
+                // $().innerHeight()        - inner height of the element
+                // DOMElement.scrollHeight  - height of the content of the element
+                
+                if (!this._isLoading
+                    && this._data.length > 0
+                    && _element.scrollTop() + _element.innerHeight() >= _element[0].scrollHeight - 100) {
+                    this._isLoading = true;
+                    this._api.get<Face[]>(`/me/photos?before=${moment(this._data[this._data.length - 1].date).toISOString()}`)
+                        .then(data => {
+                            this._data.push.apply(this._data, data);
+                            window.console.log('is now', this._data.length);
+                            this._isLoading = false;
+                        });
+                }
+            });
+    }
+
+    private detached(): void {
+        $('.main-panel').unbind('scroll');
     }
 }
 
