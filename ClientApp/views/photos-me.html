@@ -1,0 +1,32 @@
+<template>
+    <require from="../components/spinner/spinner.html"></require>
+    <require from="./photos.css"></require>
+
+    <div class="row photos">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="content">
+                    <div class="row" style="min-height: 50px">
+                        <div class="col-md-12">
+                            <spinner show.bind="_isLoading"></spinner>
+                        </div>
+                        <div class="col-md-12" show.bind="!_isLoading && _data.length==0">
+                            No images found :(
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" repeat.for="face of _data">
+                            <div class="image-wrapper">
+                                <a href="${face.originalImage}" target="_blank" click.delegate="showImage(face)">
+                                    <img src="${face.url}" alt="" onerror="this.src='/not-found-image.jpg'" />
+                                </a>
+                                <div>
+                                    <span>${face | photoInfo }</span>
+                                    <span repeat.for="mood of face.moods | filterScores" title="${mood.name}" class="mood mood-${mood.name.toLowerCase()}">${mood.score | photoScore}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

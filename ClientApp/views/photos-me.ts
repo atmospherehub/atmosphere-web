@@ -4,38 +4,25 @@ import { RestApi } from './../services/rest-api';
 import { DialogService } from 'aurelia-dialog';
 import { ModalImage, ImageModel } from '../components/modal-image/modal-image';
 import { Router } from 'aurelia-router';
-import * as _ from 'underscore'
+import * as _ from 'underscore';
+import * as $ from 'jquery'
 
 @autoinject()
-export class Photos {
-    private _router: Router;
+export class PhotosMe {
     private _api: RestApi;
     private _dialogService: DialogService;
     private _isLoading: boolean;
-    private _currentDate: moment.Moment;
     private _data: Face[];
+    private _name: string;
 
     constructor(api: RestApi, dialogService: DialogService, router: Router) {
-        this._currentDate = moment();
         this._api = api;
         this._dialogService = dialogService;
-        this._router = router;
     }
 
     activate(routeParams, routeConfig) {
-        let currentDate = moment(routeParams.date);
-        if (currentDate.isValid) {
-            this._currentDate = currentDate;
-        }
-        else {
-            this._currentDate = moment();
-        }
-
-        routeConfig.navModel.title = `Photos of ${currentDate.format('MMM D YYYY')}`;
-
         this._isLoading = true;
-        this._data = [];
-        this._api.get<Face[]>(`/calendar/day/${this._currentDate.toISOString()}`)
+        this._api.get<Face[]>(`/me/photos`)
             .then(data => {
                 this._data = data;
                 this._isLoading = false;
@@ -66,30 +53,38 @@ export class Photos {
             lock: false
         });
     }
-}
 
-export class PhotosTitleValueConverter {
-    toView(value: number, date: moment.Moment, isLoading: boolean) {
-        if (isLoading)
-            return `Loading ${date.format('MMMM D')}...`;
-        else if (value == 0)
-            return `No image on ${date.format('MMMM D')}`;
-        else if (value == 1)
-            return `1 image on ${date.format('MMMM D')}`;
-        else
-            return `${value} images on ${date.format('MMMM D')}`;
+    private attached(): void {
+        $('.main-panel')
+            .scrollTop(0)
+            .bind('scroll', (e) => {
+                var _element = $(e.target);
+                // $().scrollTop()          - how much has been scrolled
+                // $().innerHeight()        - inner height of the element
+                // DOMElement.scrollHeight  - height of the content of the element
+                
+                if (!this._isLoading
+                    && this._data.length > 0
+                    && _element.scrollTop() + _element.innerHeight() >= _element[0].scrollHeight - 100) {
+                    this._isLoading = true;
+                    this._api.get<Face[]>(`/me/photos?before=${moment(this._data[this._data.length - 1].date).toISOString()}`)
+                        .then(data => {
+                            this._data.push.apply(this._data, data);
+                            window.console.log('is now', this._data.length);
+                            this._isLoading = false;
+                        });
+                }
+            });
+    }
+
+    private detached(): void {
+        $('.main-panel').unbind('scroll');
     }
 }
 
 export class CalendarUrlValueConverter {
     toView(value: moment.Moment, router: Router) {
         return router.generate(`calendar`, { currentDate: value.format("YYYY-MM-DD") })
-    }
-}
-
-export class PhotosUrlValueConverter {
-    toView(value: moment.Moment, router: Router, addition: number) {
-        return router.generate(`calendar-day`, { date: value.clone().add(addition, 'd').format("YYYY-MM-DD") })
     }
 }
 

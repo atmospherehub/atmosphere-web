@@ -44,7 +44,15 @@ export class Main {
         {
             route: ['calendar/:date/day'],
             name: 'calendar-day',
-            moduleId: PLATFORM.moduleName('../views/photos')
+            moduleId: PLATFORM.moduleName('../views/photos-calendar')
+        },
+        {
+            route: ['me'],
+            name: 'me',
+            settings: { icon: 'id-card-o' },
+            moduleId: PLATFORM.moduleName('../views/photos-me'),
+            nav: true,
+            title: 'Me'
         }]);
 
         this.router = router;
