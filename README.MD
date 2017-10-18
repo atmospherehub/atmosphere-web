@@ -27,6 +27,8 @@ This client app for presenting dashboards and aggregated data collected in atmos
 
 ## Run
 
+You can either just run debugger in Visual Studio (which will spin up Node.js with hot reload) or run from CLI:
+
 ```
 dotnet restore
 npm install
