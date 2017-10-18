@@ -31,7 +31,7 @@ namespace AtmosphereWeb.Controllers
             if (!before.HasValue) before = DateTimeOffset.UtcNow.AddMinutes(10);
 
             await _connection.OpenAsync();
-            var userId = await _connection.ExecuteScalarAsync<string>("SELECT UserId FROM UsersMap WHERE email = @email", new { email });
+            var userId = await _connection.ExecuteScalarAsync<string>("SELECT UserId FROM [dbo].[UsersMap] WHERE email = @email", new { email });
 
             if (String.IsNullOrEmpty(userId)) return BadRequest(new { message = "User has no mappings" });
 
@@ -48,7 +48,7 @@ namespace AtmosphereWeb.Controllers
                       ,f.[CognitiveSadness] AS [Sadness]
                       ,f.[CognitiveSurprise] AS [Surprise]
                 FROM [dbo].[Faces] AS f
-                WHERE UserId = @userId AND CAST(f.[Time] AT TIME ZONE 'Israel Standard Time' AS DATE) <=  CAST(@before AT TIME ZONE 'Israel Standard Time' AS DATE)
+                WHERE UserId = @userId AND CAST(f.[Time] AT TIME ZONE 'Israel Standard Time' AS DATE) <  CAST(@before AT TIME ZONE 'Israel Standard Time' AS DATE)
                 ORDER BY f.[Time] DESC",
                 new
                 {
@@ -59,6 +59,7 @@ namespace AtmosphereWeb.Controllers
             return Ok(result
                 .Select(f => new
                 {
+                    Id = f.Id,
                     Url = $"{_config["ImagesEndpoint"]}/zoomin/{f.Id.ToString("D")}.jpg",
                     OriginalImage = $"{_config["ImagesEndpoint"]}/faces/{f.Image}",
                     f.Date,
@@ -73,6 +74,22 @@ namespace AtmosphereWeb.Controllers
                         new { Name = "Surprise", Score = f.Surprise }
                     }
                 }));
+        }
+
+        [HttpDelete("photo/{id}")]
+        public async Task<IActionResult> DeleteMyPhoto(Guid id)
+        {
+            var email = this.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            if (String.IsNullOrEmpty(email)) return BadRequest(new { message = "No email in identity" });
+
+            await _connection.OpenAsync();
+            var userId = await _connection.ExecuteScalarAsync<string>("SELECT UserId FROM [dbo].[UsersMap] WHERE email = @email", new { email });
+            var deletedRows = await _connection.ExecuteAsync("DELETE FROM [dbo].[Faces] WHERE Id = @id AND UserId = @userId", new { userId, id });
+
+            if (deletedRows == 1)
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

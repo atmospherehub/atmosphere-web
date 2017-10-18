@@ -10,6 +10,7 @@
         </ux-dialog-body>
         <ux-dialog-footer>
             <div class="stats"><i class="fa fa-info-circle"></i> ${_model.text}</div>
+            <button show.bind="_model.actionText" click.trigger="_controller.ok(_model)" class="btn-action">${_model.actionText}</button>
             <button click.trigger="_controller.cancel()">Close</button>
         </ux-dialog-footer>
     </ux-dialog>

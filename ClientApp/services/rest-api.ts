@@ -3,7 +3,7 @@ import { inject } from 'aurelia-framework';
 import { getLogger, Logger } from 'aurelia-logging';
 import { AuthService } from "./auth";
 
-@inject(FetchClient, AuthService, getLogger('RestApi')) 
+@inject(FetchClient, AuthService, getLogger('RestApi'))
 export class RestApi {
     private _fetchClient: FetchClient;
     private _logger: Logger;
@@ -46,6 +46,17 @@ export class RestApi {
             .then(result => {
                 if (!result.ok) return null;
                 return result.json() as Promise<T>;
+            });
+    }
+
+    public delete(apiPath: string): Promise<boolean> {
+        return this._fetchClient.fetch(
+            apiPath,
+            {
+                method: 'delete'
+            })
+            .then(result => {
+                return result.ok;
             });
     }
 }
