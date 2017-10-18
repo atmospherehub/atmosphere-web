@@ -19,3 +19,6 @@ before_build:
 build_script:
   # this will do the build of backend, restore npm and run webpack
   - cmd: dotnet publish ./atmosphere-web.csproj
+branches:
+  only:
+  - master
