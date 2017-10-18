@@ -32,4 +32,6 @@ export interface ImageModel {
     imageUrl: string;
     downloadImageUrl: string;
     text: string;
+    actionText: string;
+    data: any;
 }

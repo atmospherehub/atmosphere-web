@@ -4,3 +4,17 @@
     line-height: 40px;
     text-align: left
 }
+
+ux-dialog-footer button.btn-action{
+    color: #EE2D20;
+    border-color: #EE2D20;
+    font-weight: bold
+}
+
+ux-dialog-footer button.btn-action:hover:enabled,
+ux-dialog-footer button.btn-action:active:enabled
+{
+    color: #EE2D20;
+    border-color: #EE2D20;
+    background-color: #ffc5c5
+}

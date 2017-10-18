@@ -1,11 +1,12 @@
 import { autoinject } from 'aurelia-framework';
 import * as moment from 'moment';
 import { RestApi } from './../services/rest-api';
-import { DialogService } from 'aurelia-dialog';
+import { DialogService, DialogCloseResult } from 'aurelia-dialog';
 import { ModalImage, ImageModel } from '../components/modal-image/modal-image';
 import { Router } from 'aurelia-router';
 import * as _ from 'underscore';
 import * as $ from 'jquery'
+import { Prompt } from '../components/prompt/prompt';
 
 @autoinject()
 export class PhotosMe {
@@ -37,20 +38,34 @@ export class PhotosMe {
             .map(m => `${m.name}: ${Math.floor(m.score * 100)}%`)
             .value()
             .join(' | ');
-        var infoText: string;
-        if (face.firstName)
-            infoText = `${face.firstName} at ${moment(face.date).format('HH:mm')} | ${moodsFormated}`;
-        else
-            infoText = `Time: ${moment(face.date).format('HH:mm')} | ${moodsFormated}`;
 
         this._dialogService.open({
             viewModel: ModalImage,
             model: {
                 imageUrl: face.url,
                 downloadImageUrl: face.originalImage,
-                text: infoText
+                text: `Date: ${moment(face.date).format('MMM D HH:mm')} | ${moodsFormated}`,
+                actionText: 'Not me!',
+                data: face
             },
             lock: false
+        }).whenClosed((result: DialogCloseResult) => {
+            if (result.wasCancelled) return;
+
+            this._api.delete(`/me/photo/${result.output.data.id}`)
+                .then(success => {
+                    if (!success) {
+                        this._dialogService.open({
+                            viewModel: Prompt,
+                            model: { text: 'This didn\'t work. This is all we know. Try again later or call someone who know what to do.' },
+                            lock: false
+                        });
+                    }
+                    else {
+                        this._data.splice(this._data.indexOf(result.output.data), 1);
+                    }
+                });
+
         });
     }
 
@@ -62,15 +77,17 @@ export class PhotosMe {
                 // $().scrollTop()          - how much has been scrolled
                 // $().innerHeight()        - inner height of the element
                 // DOMElement.scrollHeight  - height of the content of the element
-                
+
                 if (!this._isLoading
                     && this._data.length > 0
                     && _element.scrollTop() + _element.innerHeight() >= _element[0].scrollHeight - 100) {
                     this._isLoading = true;
                     this._api.get<Face[]>(`/me/photos?before=${moment(this._data[this._data.length - 1].date).toISOString()}`)
                         .then(data => {
+                            if (data.length == 0) {
+                                $('.main-panel').unbind('scroll');
+                            }
                             this._data.push.apply(this._data, data);
-                            window.console.log('is now', this._data.length);
                             this._isLoading = false;
                         });
                 }
@@ -82,19 +99,9 @@ export class PhotosMe {
     }
 }
 
-export class CalendarUrlValueConverter {
-    toView(value: moment.Moment, router: Router) {
-        return router.generate(`calendar`, { currentDate: value.format("YYYY-MM-DD") })
-    }
-}
-
 export class PhotoInfoValueConverter {
     toView(face: Face) {
-        let timestamp = moment(face.date).format("HH:mm");
-        if (face.firstName)
-            return `${face.firstName} at ${timestamp}`;
-        else
-            return timestamp;
+        return moment(face.date).format("MMM D HH:mm");
     }
 }
 
@@ -115,11 +122,11 @@ export class FilterScoresValueConverter {
 }
 
 interface Face {
+    id: string;
     url: string;
     originalImage: string;
     date: Date;
     moods: FaceMood[];
-    firstName: string;
 }
 
 interface FaceMood {

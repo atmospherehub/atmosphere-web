@@ -1,4 +1,10 @@
 
+## Web client of atmosphere
+
+[![Build status](https://ci.appveyor.com/api/projects/status/17g41da706wu6bn2/branch/master?svg=true)](https://ci.appveyor.com/project/jenyayel/atmosphere-web/branch/master)
+
+This client app for presenting dashboards and aggregated data collected in atmosphere
+
 ## Required configurations
 
 ```
@@ -20,6 +26,8 @@
 ```
 
 ## Run
+
+You can either just run debugger in Visual Studio (which will spin up Node.js with hot reload) or run from CLI:
 
 ```
 dotnet restore
