@@ -1,7 +1,7 @@
 
 ## Web client of atmosphere
 
-https://ci.appveyor.com/api/projects/status/17g41da706wu6bn2?svg=true)](https://ci.appveyor.com/project/jenyayel/atmosphere-web)
+[![Build status](https://ci.appveyor.com/api/projects/status/17g41da706wu6bn2/branch/master?svg=true)](https://ci.appveyor.com/project/jenyayel/atmosphere-web/branch/master)
 
 This client app for presenting dashboards and aggregated data collected in atmosphere
 
